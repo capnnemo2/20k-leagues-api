@@ -29,11 +29,9 @@ describe("countries endpoints", function () {
       });
 
       it(`responds with 200 and all of the countries`, () => {
-        console.log("test countries", testCountries);
         const expectedCountries = testCountries.map((country) =>
           helpers.makeExpectedCountry(country)
         );
-        console.log("expected countries", expectedCountries);
         return supertest(app)
           .get("/api/countries")
           .expect(200, expectedCountries);

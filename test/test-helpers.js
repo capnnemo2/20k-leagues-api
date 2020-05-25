@@ -64,10 +64,39 @@ function seedAnimals(db, animals) {
   return db.into("animals").insert(animals);
 }
 
+function makeSpecialtiesArray() {
+  return [
+    {
+      id: 1,
+      spec_name: "Altitude Diver",
+    },
+    {
+      id: 2,
+      spec_name: "Boat Diver",
+    },
+    {
+      id: 3,
+      spec_name: "Cavern Diver",
+    },
+  ];
+}
+
+function makeExpectedSpecialty(specialty) {
+  return {
+    id: specialty.id,
+    spec_name: specialty.spec_name,
+  };
+}
+
+function seedSpecialties(db, specialties) {
+  return db.into("specialties").insert(specialties);
+}
+
 function makeFixtures() {
   const testCountries = makeCountriesArray();
   const testAnimals = makeAnimalsArray();
-  return { testCountries, testAnimals };
+  const testSpecialties = makeSpecialtiesArray();
+  return { testCountries, testAnimals, testSpecialties };
 }
 
 function cleanTables(db) {
@@ -92,6 +121,10 @@ module.exports = {
   makeAnimalsArray,
   makeExpectedAnimal,
   seedAnimals,
+
+  makeSpecialtiesArray,
+  makeExpectedSpecialty,
+  seedSpecialties,
 
   makeFixtures,
   cleanTables,

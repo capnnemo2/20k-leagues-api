@@ -29,11 +29,9 @@ describe("animals endpoints", function () {
       });
 
       it(`responds with 200 and all of the animals`, () => {
-        console.log("test animals", testAnimals);
         const expectedAnimals = testAnimals.map((animal) =>
           helpers.makeExpectedAnimal(animal)
         );
-        console.log("expected animals", expectedAnimals);
         return supertest(app).get("/api/animals").expect(200, expectedAnimals);
       });
     });
