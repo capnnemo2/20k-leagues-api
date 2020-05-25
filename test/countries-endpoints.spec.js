@@ -23,13 +23,21 @@ describe("countries endpoints", function () {
   afterEach("cleanup", () => helpers.cleanTables(db));
 
   describe(`GET /api/countries`, () => {
-    it(`responds with 200 and all of the countries`, () => {
-      const expectedCountries = testCountries.map((country) =>
-        helpers.makeExpectedCountry(country)
-      );
-      return supertest(app)
-        .get("/api/countries")
-        .expect(200, expectedCountries);
+    context(`Given there are countries in the database`, () => {
+      beforeEach("insert countries", () => {
+        return helpers.seedCountries(db, testCountries);
+      });
+
+      it(`responds with 200 and all of the countries`, () => {
+        console.log("test countries", testCountries);
+        const expectedCountries = testCountries.map((country) =>
+          helpers.makeExpectedCountry(country)
+        );
+        console.log("expected countries", expectedCountries);
+        return supertest(app)
+          .get("/api/countries")
+          .expect(200, expectedCountries);
+      });
     });
   });
 });

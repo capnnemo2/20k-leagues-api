@@ -51,10 +51,15 @@ function cleanTables(db) {
   );
 }
 
+function seedCountries(db, countries) {
+  return db.into("countries").insert(countries);
+}
+
 module.exports = {
   makeCountriesArray,
   makeExpectedCountry,
   makeFixtures,
 
   cleanTables,
+  seedCountries,
 };
