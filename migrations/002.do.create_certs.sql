@@ -4,5 +4,5 @@ CREATE TABLE certs (
     agency TEXT NOT NULL,
     certLevel TEXT NOT NULL,
     certNum TEXT NOT NULL,
-    certDate DATE NOT NULL,
+    certDate DATE NOT NULL
 );

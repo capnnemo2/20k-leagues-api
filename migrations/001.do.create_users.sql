@@ -6,5 +6,5 @@ CREATE TABLE users (
     specialties INTEGER [],
     instructorSpecialties INTEGER [],
     wishlist INTEGER [],
-    wishlistFulfilled INTEGER [],
+    wishlistFulfilled INTEGER []
 );
