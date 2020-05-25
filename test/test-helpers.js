@@ -32,9 +32,42 @@ function makeExpectedCountry(country) {
   };
 }
 
+function seedCountries(db, countries) {
+  return db.into("countries").insert(countries);
+}
+
+function makeAnimalsArray() {
+  return [
+    {
+      id: 1,
+      animal: "Whale Shark",
+    },
+    {
+      id: 2,
+      animal: "Mola Mola",
+    },
+    {
+      id: 3,
+      animal: "Thresher Shark",
+    },
+  ];
+}
+
+function makeExpectedAnimal(animal) {
+  return {
+    id: animal.id,
+    animal: animal.animal,
+  };
+}
+
+function seedAnimals(db, animals) {
+  return db.into("animals").insert(animals);
+}
+
 function makeFixtures() {
   const testCountries = makeCountriesArray();
-  return { testCountries };
+  const testAnimals = makeAnimalsArray();
+  return { testCountries, testAnimals };
 }
 
 function cleanTables(db) {
@@ -51,15 +84,15 @@ function cleanTables(db) {
   );
 }
 
-function seedCountries(db, countries) {
-  return db.into("countries").insert(countries);
-}
-
 module.exports = {
   makeCountriesArray,
   makeExpectedCountry,
-  makeFixtures,
-
-  cleanTables,
   seedCountries,
+
+  makeAnimalsArray,
+  makeExpectedAnimal,
+  seedAnimals,
+
+  makeFixtures,
+  cleanTables,
 };
