@@ -1,4 +1,4 @@
 CREATE TABLE specialties (
     id SERIAL PRIMARY KEY,
-    "name" TEXT NOT NULL
+    spec_name TEXT NOT NULL
 );

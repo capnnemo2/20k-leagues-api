@@ -1,7 +1,7 @@
 CREATE TABLE dives (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-    "date" DATE NOT NULL,
+    diveDate DATE NOT NULL,
     country TEXT NOT NULL,
     region TEXT NOT NULL,
     diveSite TEXT NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE dives (
     diveType TEXT,
     driftDive TEXT,
     nightDive TEXT,
-    "description" TEXT,
+    description TEXT,
      animalsSpotted INTEGER [],
      rating INTEGER NOT NULL
 );
