@@ -138,6 +138,31 @@ function seedUsers(db, users) {
   return db.into("users").insert(users);
 }
 
+function makeMaliciousUser() {
+  const maliciousUser = {
+    id: 911,
+    first_name: '<script>alert("xss");</script>',
+    email: '<script>alert("xss");</script>',
+    password: '<script>alert("xss");</script>',
+  };
+
+  const expectedUser = {
+    id: 911,
+    first_name: '&lt;script&gt;alert("xss");&lt;/script&gt;',
+    email: '&lt;script&gt;alert("xss");&lt;/script&gt;',
+    password: '&lt;script&gt;alert("xss");&lt;/script&gt;',
+  };
+
+  return {
+    maliciousUser,
+    expectedUser,
+  };
+}
+
+function seedMaliciousUser(db, user) {
+  return db.into("users").insert([user]);
+}
+
 // DIVES
 function makeDivesArray() {
   return [
@@ -306,6 +331,8 @@ module.exports = {
   makeUsersArray,
   makeExpectedUser,
   seedUsers,
+  makeMaliciousUser,
+  seedMaliciousUser,
 
   makeDivesArray,
   makeExpectedDive,
