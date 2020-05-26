@@ -3,7 +3,7 @@ const app = require("../src/app");
 const helpers = require("./test-helpers");
 const { TEST_DATABASE_URL } = require("../src/config");
 
-describe.only("animalTracker", function () {
+describe("animalTracker", function () {
   let db;
 
   const { testAnimalsTracked } = helpers.makeFixtures();
@@ -41,6 +41,23 @@ describe.only("animalTracker", function () {
         return supertest(app)
           .get("/api/animalTracker")
           .expect(200, expectedAnimalsTracked);
+      });
+    });
+  });
+
+  describe(`GET /api/animalTracker/:animal`, () => {
+    context(`Given there are animals that have been tracked`, () => {
+      beforeEach("insert animals tracked", () => {
+        return helpers.seedAnimalsTracked(db, testAnimalsTracked);
+      });
+
+      it(`responds with 200 and a list of the specified animal`, () => {
+        const animal = "Whale Shark";
+        const expectedAnimal = helpers
+          .makeExpectedAnimalTracked
+          //   does this mean I have to use the animal id from animals for this???
+          // and then to search by country, use the country id from countries?
+          ();
       });
     });
   });

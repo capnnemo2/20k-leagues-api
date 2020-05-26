@@ -31,8 +31,6 @@ describe("dives endpoints", function () {
 
     context(`Given there are dives in the database`, () => {
       beforeEach("insert dives", () => {
-        console.log("test dives: ", testDives);
-
         return helpers.seedDives(db, testDives);
       });
 

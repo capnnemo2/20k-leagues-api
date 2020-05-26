@@ -101,43 +101,43 @@ function makeDivesArray() {
     {
       id: 1,
       user_id: 1,
-      diveDate: "2020-05-04",
+      divedate: "2020-05-04",
       country: "Cayman Islands",
       region: "Grand Cayman, West",
-      diveSite: "Cheeseburger Reef",
-      maxDepth: 35,
+      divesite: "Cheeseburger Reef",
+      maxdepth: 35,
       duration: 90,
-      waterTemp: 82,
-      diveShop: "Lobster Pot",
+      watertemp: 82,
+      diveshop: "Lobster Pot",
       guide: "",
       buddy: "",
       viz: 4,
-      diveType: "Shore",
-      driftDive: false,
-      nightDive: false,
+      divetype: "Shore",
+      driftdive: false,
+      nightdive: false,
       description: "So warm and clear.",
-      animalsSpotted: [1, 2],
+      animalsspotted: [1, 2],
       rating: 4,
     },
     {
       id: 2,
       user_id: 1,
-      diveDate: "2020-05-05",
+      divedate: "2020-05-05",
       country: "Cayman Islands",
       region: "Grand Cayman, West",
-      diveSite: "Cheeseburger Reef",
-      maxDepth: 30,
+      divesite: "Cheeseburger Reef",
+      maxdepth: 30,
       duration: 45,
-      waterTemp: 83,
-      diveShop: "Lobster Pot",
+      watertemp: 83,
+      diveshop: "Lobster Pot",
       guide: "",
       buddy: "",
       viz: 4,
-      diveType: "Shore",
-      driftDive: false,
-      nightDive: false,
+      divetype: "Shore",
+      driftdive: false,
+      nightdive: false,
       description: "So warm and clear.",
-      animalsSpotted: [],
+      animalsspotted: [],
       rating: 2,
     },
   ];
@@ -168,8 +168,14 @@ function makeExpectedDive(dive) {
 }
 
 function seedDives(db, dives) {
-  console.log("seed dives: ", dives);
   return db.into("dives").insert(dives);
+}
+
+function seedUsersAndDives(db, users, dives) {
+  return db
+    .into("users")
+    .insert(users)
+    .then(() => dives.length && db.into("dives").insert(dives));
 }
 
 // ANIMALTRACKER
@@ -255,6 +261,7 @@ module.exports = {
   makeDivesArray,
   makeExpectedDive,
   seedDives,
+  seedUsersAndDives,
 
   makeAnimalsTrackedArray,
   makeExpectedAnimalTracked,

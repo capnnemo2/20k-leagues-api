@@ -11,21 +11,6 @@ animalsRouter.route("/").get((req, res, next) => {
     .catch(next);
 });
 
-// animalsRouter.route("/:animal_id").get((req, res, next) => {
-//   AnimalsService.getAnimalById(req.app.get("db"), req.params.animal_id)
-//     .then((animal) => {
-//       if (!animal) {
-//         return res
-//           .status(404)
-//           .json({ error: { message: `Animal doesn't exist` } });
-//       }
-//       res.animal = animal;
-//       next();
-//     })
-//     .catch(next)
-//     .then(res.json());
-// });
-
 animalsRouter
   .route("/:animal_id")
   .all((req, res, next) => {
