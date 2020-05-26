@@ -184,10 +184,10 @@ describe.only("users endpoints", function () {
           first_name: "first name",
           email: "email",
           password: "password",
-          specialties: ["updated", "specs"],
-          instructor_specialties: ["updated", "instr", "specs"],
-          wishlist: ["updated", "wishlist"],
-          wishlist_fulfilled: ["updated", "wishlist", "fulfilled"],
+          specialties: [1, 2],
+          instructor_specialties: [1, 2, 3],
+          wishlist: [1, 2, 3, 4],
+          wishlist_fulfilled: [1, 2, 3],
         };
 
         const expectedUser = {
