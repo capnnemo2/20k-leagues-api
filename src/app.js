@@ -7,6 +7,7 @@ const { NODE_ENV } = require("./config");
 const countriesRouter = require("./countries/countries-router");
 const animalsRouter = require("./animals/animals-router");
 const specialtiesRouter = require("./specialties/specialties-router");
+const divesRouter = require("./dives/dives-router");
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(cors());
 app.use("/api/countries", countriesRouter);
 app.use("/api/animals", animalsRouter);
 app.use("/api/specialties", specialtiesRouter);
+app.use("/api/dives", divesRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello, world");

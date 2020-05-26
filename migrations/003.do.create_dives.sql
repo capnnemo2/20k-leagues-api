@@ -16,6 +16,6 @@ CREATE TABLE dives (
     driftDive TEXT,
     nightDive TEXT,
     description TEXT,
-     animalsSpotted INTEGER [],
-     rating INTEGER NOT NULL
+    animalsSpotted INTEGER [],
+    rating INTEGER NOT NULL
 );
