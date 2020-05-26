@@ -95,49 +95,92 @@ function seedSpecialties(db, specialties) {
   return db.into("specialties").insert(specialties);
 }
 
+// USERS
+function makeUsersArray() {
+  return [
+    {
+      id: 1,
+      first_name: "Bob",
+      email: "bob@email.com",
+      password: "password",
+      specialties: [1, 2],
+      instructor_specialties: [],
+      wishlist: [1, 2, 3, 4, 5],
+      wishlist_fulfilled: [],
+    },
+    {
+      id: 2,
+      first_name: "Tim",
+      email: "tim@email.com",
+      password: "pop",
+      specialties: [3, 4],
+      instructor_specialties: [],
+      wishlist: [6, 7, 8, 9],
+      wishlist_fulfilled: [],
+    },
+  ];
+}
+
+function makeExpectedUser(user) {
+  return {
+    id: user.id,
+    first_name: user.first_name,
+    email: user.email,
+    password: user.password,
+    specialties: user.specialties,
+    instructor_specialties: user.instructor_specialties,
+    wishlist: user.wishlist,
+    wishlist_fulfilled: user.wishlist_fulfilled,
+  };
+}
+
+function seedUsers(db, users) {
+  return db.into("users").insert(users);
+}
+
 // DIVES
 function makeDivesArray() {
   return [
     {
       id: 1,
       user_id: 1,
-      divedate: "2020-05-04",
+      dive_date: "2020-05-04",
       country: "Cayman Islands",
       region: "Grand Cayman, West",
-      divesite: "Cheeseburger Reef",
-      maxdepth: 35,
+      dive_site: "Cheeseburger Reef",
+      max_depth: 35,
       duration: 90,
-      watertemp: 82,
-      diveshop: "Lobster Pot",
+      water_temp: 82,
+      dive_shop: "Lobster Pot",
       guide: "",
       buddy: "",
       viz: 4,
-      divetype: "Shore",
-      driftdive: false,
-      nightdive: false,
+      dive_type: "Shore",
+      drift_dive: false,
+      night_dive: false,
       description: "So warm and clear.",
-      animalsspotted: [1, 2],
+      animals_spotted: [1, 2],
       rating: 4,
     },
     {
       id: 2,
       user_id: 1,
-      divedate: "2020-05-05",
+      dive_date: "2020-05-05",
       country: "Cayman Islands",
       region: "Grand Cayman, West",
-      divesite: "Cheeseburger Reef",
-      maxdepth: 30,
+      dive_site: "Cheeseburger Reef",
+      max_depth: 30,
       duration: 45,
-      watertemp: 83,
-      diveshop: "Lobster Pot",
+      water_temp: 83,
+      dive_shop: "Lobster Pot",
       guide: "",
       buddy: "",
       viz: 4,
-      divetype: "Shore",
-      driftdive: false,
-      nightdive: false,
+      dive_type: "Shore",
+      drift_dive: false,
+      night_dive: false,
       description: "So warm and clear.",
-      animalsspotted: [],
+      animals_spotted: [],
       rating: 2,
     },
   ];
@@ -147,22 +190,22 @@ function makeExpectedDive(dive) {
   return {
     id: dive.id,
     user_id: dive.user_id,
-    diveDate: dive.diveDate,
+    dive_date: dive.dive_date,
     country: dive.country,
     region: dive.region,
-    diveSite: dive.diveSite,
-    maxDepth: dive.maxDepth,
+    dive_site: dive.dive_site,
+    max_depth: dive.max_depth,
     duration: dive.duration,
-    waterTemp: dive.waterTemp,
-    diveShop: dive.diveShop,
+    water_temp: dive.water_temp,
+    dive_shop: dive.dive_shop,
     guide: dive.guide,
     buddy: dive.buddy,
     viz: dive.viz,
-    diveType: dive.diveType,
-    driftDive: dive.driftDive,
-    nightDive: dive.nightDive,
+    dive_type: dive.dive_type,
+    drift_dive: dive.drift_dive,
+    night_dive: dive.night_dive,
     description: dive.description,
-    animalsSpotted: dive.animalsSpotted,
+    animals_spotted: dive.animals_spotted,
     rating: dive.rating,
   };
 }
@@ -222,12 +265,14 @@ function makeFixtures() {
   const testSpecialties = makeSpecialtiesArray();
   const testDives = makeDivesArray();
   const testAnimalsTracked = makeAnimalsTrackedArray();
+  const testUsers = makeUsersArray();
   return {
     testCountries,
     testAnimals,
     testSpecialties,
     testDives,
     testAnimalsTracked,
+    testUsers,
   };
 }
 
@@ -257,6 +302,10 @@ module.exports = {
   makeSpecialtiesArray,
   makeExpectedSpecialty,
   seedSpecialties,
+
+  makeUsersArray,
+  makeExpectedUser,
+  seedUsers,
 
   makeDivesArray,
   makeExpectedDive,
