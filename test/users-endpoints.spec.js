@@ -3,7 +3,7 @@ const app = require("../src/app");
 const helpers = require("./test-helpers");
 const { TEST_DATABASE_URL } = require("../src/config");
 
-describe("users endpoints", function () {
+describe.only("users endpoints", function () {
   let db;
 
   const { testUsers } = helpers.makeFixtures();
@@ -39,6 +39,23 @@ describe("users endpoints", function () {
           helpers.makeExpectedUser(user)
         );
         return supertest(app).get("/api/users").expect(200, expectedUsers);
+      });
+    });
+  });
+
+  describe(`GET /api/users/:user_id`, () => {
+    context(`Given there are users in the database`, () => {
+      beforeEach("insert users", () => {
+        return helpers.seedUsers(db, testUsers);
+      });
+
+      it(`responds with 200 and the specified user`, () => {
+        const userId = 2;
+        const expectedUser = helpers.makeExpectedUser(testUsers[userId - 1]);
+
+        return supertest(app)
+          .get(`/api/users/${userId}`)
+          .expect(200, expectedUser);
       });
     });
   });

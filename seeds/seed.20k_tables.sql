@@ -10,7 +10,7 @@ TRUNCATE
     animalTracker
     RESTART IDENTITY CASCADE;
 
-INSERT INTO users (first_name, email, "password", specialties, instructorSpecialties, wishlist, wishlistFulfilled) VALUES
+INSERT INTO users (first_name, email, password, specialties, instructor_specialties, wishlist, wishlist_fulfilled) VALUES
     (
         'Bob',
         'bob@email.com',
@@ -35,7 +35,7 @@ INSERT INTO users (first_name, email, "password", specialties, instructorSpecial
         }'
     );
 
-INSERT INTO certs (user_id, agency, certLevel, certNum, certDate) VALUES
+INSERT INTO certs (user_id, agency, cert_level, cert_num, cert_date) VALUES
     (
         '1',
         'PADI',
@@ -44,7 +44,7 @@ INSERT INTO certs (user_id, agency, certLevel, certNum, certDate) VALUES
         'May 2020'       
     );
 
-INSERT INTO dives (user_id, diveDate, country, region, diveSite, maxDepth, duration, waterTemp, diveShop, guide, buddy, viz, diveType, driftDive, nightDive, description, animalsSpotted, rating) VALUES
+INSERT INTO dives (user_id, dive_date, country, region, dive_site, max_depth, duration, water_temp, dive_shop, guide, buddy, viz, dive_type, drift_dive, night_dive, description, animals_spotted, rating) VALUES
     (
         '1',
         '2020-05-04',
