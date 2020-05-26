@@ -8,6 +8,7 @@ const countriesRouter = require("./countries/countries-router");
 const animalsRouter = require("./animals/animals-router");
 const specialtiesRouter = require("./specialties/specialties-router");
 const divesRouter = require("./dives/dives-router");
+const animalTrackerRouter = require("./animalTracker/animalTracker-router");
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use("/api/countries", countriesRouter);
 app.use("/api/animals", animalsRouter);
 app.use("/api/specialties", specialtiesRouter);
 app.use("/api/dives", divesRouter);
+app.use("/api/animalTracker", animalTrackerRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello, world");

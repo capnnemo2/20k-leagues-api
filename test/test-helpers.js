@@ -172,13 +172,57 @@ function seedDives(db, dives) {
   return db.into("dives").insert(dives);
 }
 
+// ANIMALTRACKER
+function makeAnimalsTrackedArray() {
+  return [
+    {
+      id: 1,
+      animal: "Whale Shark",
+      country: "United States of America",
+      region: "Hawaii",
+    },
+    {
+      id: 2,
+      animal: "Mola Mola",
+      country: "Indonesia",
+      region: "Bali, Nusa Lembongan, Nusa Penida",
+    },
+    {
+      id: 3,
+      animal: "Manta Ray",
+      country: "Indonesia",
+      region: "Komodo",
+    },
+  ];
+}
+
+function makeExpectedAnimalTracked(animal) {
+  return {
+    id: animal.id,
+    animal: animal.animal,
+    country: animal.country,
+    region: animal.region,
+  };
+}
+
+function seedAnimalsTracked(db, animals) {
+  return db.into("animaltracker").insert(animals);
+}
+
 // EVERYTHING
 function makeFixtures() {
   const testCountries = makeCountriesArray();
   const testAnimals = makeAnimalsArray();
   const testSpecialties = makeSpecialtiesArray();
   const testDives = makeDivesArray();
-  return { testCountries, testAnimals, testSpecialties, testDives };
+  const testAnimalsTracked = makeAnimalsTrackedArray();
+  return {
+    testCountries,
+    testAnimals,
+    testSpecialties,
+    testDives,
+    testAnimalsTracked,
+  };
 }
 
 function cleanTables(db) {
@@ -211,6 +255,10 @@ module.exports = {
   makeDivesArray,
   makeExpectedDive,
   seedDives,
+
+  makeAnimalsTrackedArray,
+  makeExpectedAnimalTracked,
+  seedAnimalsTracked,
 
   makeFixtures,
   cleanTables,
