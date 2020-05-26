@@ -10,6 +10,7 @@ const specialtiesRouter = require("./specialties/specialties-router");
 const divesRouter = require("./dives/dives-router");
 const animalTrackerRouter = require("./animalTracker/animalTracker-router");
 const usersRouter = require("./users/users-router");
+const certsRouter = require("./certs/certs-router");
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use("/api/specialties", specialtiesRouter);
 app.use("/api/dives", divesRouter);
 app.use("/api/animalTracker", animalTrackerRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/certs", certsRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello, world");

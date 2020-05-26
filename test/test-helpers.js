@@ -246,6 +246,64 @@ function seedUsersAndDives(db, users, dives) {
     .then(() => dives.length && db.into("dives").insert(dives));
 }
 
+// CERTS
+function makeCertsArray() {
+  return [
+    {
+      id: 1,
+      user_id: users[0].id,
+      agency: "test agency",
+      cert_level: "test cert level",
+      cert_num: "test cert num",
+      cert_date: "test cert date",
+    },
+    {
+      id: 2,
+      user_id: users[users.length - 1].id,
+      agency: "test agency",
+      cert_level: "test cert level",
+      cert_num: "test cert num",
+      cert_date: "test cert date",
+    },
+  ];
+}
+
+function makeExpectedCert(cert) {
+  return {
+    id: cert.id,
+    user_id: cert.user_id,
+    agency: cert.agency,
+    cert_level: cert.cert_level,
+    cert_num: cert.cert_num,
+    cert_date: cert.cert_date,
+  };
+}
+
+function makeExpectedUserCerts(userId, certs) {
+  const expectedCerts = certs.filter((cert) => cert.user_id === userId);
+  return expectedCerts.map((c) => {
+    return {
+      id: c.id,
+      user_id: c.user_id,
+      agency: c.agency,
+      cert_level: c.cert_level,
+      cert_num: c.cert_num,
+      cert_date: c.cert_date,
+    };
+  });
+}
+
+function seedCerts(db, certs) {
+  return db.into("certs").insert(certs);
+}
+
+function seedUsersAndCerts(db, users, certs) {
+  return db
+    .into("users")
+    .insert(users)
+    .then(() => certs.length && db.into("certs").insert(certs));
+}
+
 // ANIMALTRACKER
 function makeAnimalsTrackedArray() {
   return [
@@ -289,6 +347,7 @@ function makeFixtures() {
   const testAnimals = makeAnimalsArray();
   const testSpecialties = makeSpecialtiesArray();
   const testDives = makeDivesArray();
+  const testCerts = makeCertsArray();
   const testAnimalsTracked = makeAnimalsTrackedArray();
   const testUsers = makeUsersArray();
   return {
@@ -296,6 +355,7 @@ function makeFixtures() {
     testAnimals,
     testSpecialties,
     testDives,
+    testCerts,
     testAnimalsTracked,
     testUsers,
   };
@@ -338,6 +398,12 @@ module.exports = {
   makeExpectedDive,
   seedDives,
   seedUsersAndDives,
+
+  makeCertsArray,
+  makeExpectedCert,
+  makeExpectedUserCerts,
+  seedCerts,
+  seedUsersAndCerts,
 
   makeAnimalsTrackedArray,
   makeExpectedAnimalTracked,
