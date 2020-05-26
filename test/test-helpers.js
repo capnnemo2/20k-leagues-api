@@ -1,3 +1,4 @@
+// COUNTRIES
 function makeCountriesArray() {
   return [
     {
@@ -36,6 +37,7 @@ function seedCountries(db, countries) {
   return db.into("countries").insert(countries);
 }
 
+// ANIMALS
 function makeAnimalsArray() {
   return [
     {
@@ -64,6 +66,7 @@ function seedAnimals(db, animals) {
   return db.into("animals").insert(animals);
 }
 
+// SPECIALTIES
 function makeSpecialtiesArray() {
   return [
     {
@@ -92,6 +95,7 @@ function seedSpecialties(db, specialties) {
   return db.into("specialties").insert(specialties);
 }
 
+// EVERYTHING
 function makeFixtures() {
   const testCountries = makeCountriesArray();
   const testAnimals = makeAnimalsArray();

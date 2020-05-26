@@ -36,4 +36,23 @@ describe("animals endpoints", function () {
       });
     });
   });
+
+  describe(`GET /api/animals/:animal_id`, () => {
+    context(`Given there are animals in the database`, () => {
+      beforeEach("insert animals", () => {
+        return helpers.seedAnimals(db, testAnimals);
+      });
+
+      it(`responds with 200 and the specified animal`, () => {
+        const animalId = 2;
+        const expectedAnimal = helpers.makeExpectedAnimal(
+          testAnimals[animalId - 1]
+        );
+
+        return supertest(app)
+          .get(`/api/animals/${animalId}`)
+          .expect(200, expectedAnimal);
+      });
+    });
+  });
 });
