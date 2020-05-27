@@ -42,6 +42,28 @@ describe.only("certs endpoints", function () {
         return supertest(app).get("/api/certs").expect(200, expectedCerts);
       });
     });
+
+    context(`Given an XSS attack cert`, () => {
+      const { maliciousCert, expectedCert } = helpers.makeMaliciousCert(
+        testUsers
+      );
+      beforeEach("insert malicious cert", () => {
+        return helpers.seedMaliciousCert(db, testUsers, maliciousCert);
+      });
+
+      it(`removes XSS attack content`, () => {
+        return supertest(app)
+          .get("/api/certs")
+          .expect(200)
+          .expect((res) => {
+            expect(res.body.agency).to.eql(expectedCert.agency);
+            expect(res.body.cert_level).to.eql(expectedCert.cert_level);
+            expect(res.body.cert_num).to.eql(expectedCert.cert_num);
+            expect(res.body.cert_date).to.eql(expectedCert.cert_date);
+            expect(res.body.user_id).to.eql(expectedCert.user_id);
+          });
+      });
+    });
   });
 
   describe(`POST /api/certs`, () => {
@@ -117,6 +139,84 @@ describe.only("certs endpoints", function () {
             expect(res.body.cert_date).to.eql(expectedCert.cert_date);
             expect(res.body.user_id).to.eql(expectedCert.user_id);
           });
+      });
+    });
+  });
+
+  describe(`GET /api/certs/:cert_id`, () => {
+    context(`Given no certs`, () => {
+      it(`responds with 404`, () => {
+        const certId = 1234567;
+        return supertest(app)
+          .get(`/api/certs/${certId}`)
+          .expect(404, { error: { message: `Cert doesn't exist` } });
+      });
+    });
+
+    context(`Given there are certs in the database`, () => {
+      beforeEach("insert certs", () => {
+        return helpers.seedUsersAndCerts(db, testUsers, testCerts);
+      });
+
+      it(`responds with 200 and the specified cert`, () => {
+        const certId = 2;
+        const expectedCert = helpers.makeExpectedCert(testCerts[certId - 1]);
+
+        return supertest(app)
+          .get(`/api/certs/${certId}`)
+          .expect(200, expectedCert);
+      });
+    });
+
+    context(`Given an XSS attack cert`, () => {
+      const { maliciousCert, expectedCert } = helpers.makeMaliciousCert(
+        testUsers
+      );
+      beforeEach("insert malicious cert", () => {
+        return helpers.seedMaliciousCert(db, testUsers, maliciousCert);
+      });
+
+      it(`removes XSS attack content`, () => {
+        return supertest(app)
+          .get(`/api/certs/${maliciousCert.id}`)
+          .expect(200)
+          .expect((res) => {
+            expect(res.body.agency).to.eql(expectedCert.agency);
+            expect(res.body.cert_level).to.eql(expectedCert.cert_level);
+            expect(res.body.cert_num).to.eql(expectedCert.cert_num);
+            expect(res.body.cert_date).to.eql(expectedCert.cert_date);
+            expect(res.body.user_id).to.eql(expectedCert.user_id);
+          });
+      });
+    });
+  });
+
+  describe(`DELETE /api/certs/:cert_id`, () => {
+    context(`Given there are no certs in the database`, () => {
+      it(`responds with 404`, () => {
+        const certId = 1234567;
+        return supertest(app)
+          .delete(`/api/certs/${certId}`)
+          .expect(404, { error: { message: `Cert doesn't exist` } });
+      });
+    });
+
+    context(`Given there are certs in the database`, () => {
+      const testCerts = helpers.makeCertsArray(testUsers);
+      beforeEach("insert certs", () => {
+        return helpers.seedUsersAndCerts(db, testUsers, testCerts);
+      });
+
+      it(`responds with 204 and removes the cert`, () => {
+        const idToRemove = 2;
+        const expectedCerts = testCerts.filter((c) => c.id !== idToRemove);
+
+        return supertest(app)
+          .delete(`/api/certs/${idToRemove}`)
+          .expect(204)
+          .then((res) =>
+            supertest(app).get(`/api/certs`).expect(expectedCerts)
+          );
       });
     });
   });

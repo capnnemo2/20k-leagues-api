@@ -30,4 +30,30 @@ certsRouter
       .catch(next);
   });
 
+certsRouter
+  .route("/:cert_id")
+  .all((req, res, next) => {
+    CertsService.getById(req.app.get("db"), req.params.cert_id)
+      .then((cert) => {
+        if (!cert) {
+          return res
+            .status(404)
+            .json({ error: { message: `Cert doesn't exist` } });
+        }
+        res.cert = cert;
+        next();
+      })
+      .catch(next);
+  })
+  .get((req, res, next) => {
+    res.json(CertsService.serializeCert(res.cert));
+  })
+  .delete((req, res, next) => {
+    CertsService.deleteCert(req.app.get("db"), req.params.cert_id)
+      .then((numRowsAffected) => {
+        res.status(204).end();
+      })
+      .catch(next);
+  });
+
 module.exports = certsRouter;

@@ -28,6 +28,9 @@ const CertsService = {
       cert_date: cert.cert_date,
     };
   },
+  deleteCert(db, id) {
+    return CertsService.getAllCerts(db).where({ id }).delete();
+  },
 };
 
 module.exports = CertsService;

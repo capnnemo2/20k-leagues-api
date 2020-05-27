@@ -324,6 +324,16 @@ function makeMaliciousCert(users) {
   return { maliciousCert, expectedCert };
 }
 
+function seedMaliciousCert(db, users, cert) {
+  return db
+    .into("users")
+    .insert(users)
+    .then(() =>
+      db.raw(`SELECT setval('users_id_seq', ?)`, [users[users.length - 1].id])
+    )
+    .then(() => db.into("certs").insert([cert]));
+}
+
 // ANIMALTRACKER
 function makeAnimalsTrackedArray() {
   return [
@@ -426,6 +436,7 @@ module.exports = {
   seedCerts,
   seedUsersAndCerts,
   makeMaliciousCert,
+  seedMaliciousCert,
 
   makeAnimalsTrackedArray,
   makeExpectedAnimalTracked,
