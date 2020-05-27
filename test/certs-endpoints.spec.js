@@ -3,7 +3,7 @@ const app = require("../src/app");
 const helpers = require("./test-helpers");
 const { TEST_DATABASE_URL } = require("../src/config");
 
-describe.only("certs endpoints", function () {
+describe("certs endpoints", function () {
   let db;
 
   const { testUsers, testCerts } = helpers.makeFixtures();
