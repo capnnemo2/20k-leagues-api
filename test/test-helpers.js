@@ -247,7 +247,7 @@ function seedUsersAndDives(db, users, dives) {
 }
 
 // CERTS
-function makeCertsArray() {
+function makeCertsArray(users) {
   return [
     {
       id: 1,
@@ -297,11 +297,31 @@ function seedCerts(db, certs) {
   return db.into("certs").insert(certs);
 }
 
-function seedUsersAndCerts(db, users, certs) {
+function seedUsersAndCerts(db, users, certs = []) {
   return db
     .into("users")
     .insert(users)
     .then(() => certs.length && db.into("certs").insert(certs));
+}
+
+function makeMaliciousCert(users) {
+  const maliciousCert = {
+    id: 911,
+    user_id: 1,
+    agency: '<script>alert("xss");</script>',
+    cert_level: "Course Director",
+    cert_num: '<script>alert("xss");</script>',
+    cert_date: "yesterday",
+  };
+  const expectedCert = {
+    id: 911,
+    user_id: 1,
+    agency: '&lt;script&gt;alert("xss");&lt;/script&gt;',
+    cert_level: "Course Director",
+    cert_num: '&lt;script&gt;alert("xss");&lt;/script&gt;',
+    cert_date: "yesterday",
+  };
+  return { maliciousCert, expectedCert };
 }
 
 // ANIMALTRACKER
@@ -343,13 +363,14 @@ function seedAnimalsTracked(db, animals) {
 
 // EVERYTHING
 function makeFixtures() {
+  const testUsers = makeUsersArray();
   const testCountries = makeCountriesArray();
   const testAnimals = makeAnimalsArray();
   const testSpecialties = makeSpecialtiesArray();
   const testDives = makeDivesArray();
-  const testCerts = makeCertsArray();
+  const testCerts = makeCertsArray(testUsers);
   const testAnimalsTracked = makeAnimalsTrackedArray();
-  const testUsers = makeUsersArray();
+
   return {
     testCountries,
     testAnimals,
@@ -404,6 +425,7 @@ module.exports = {
   makeExpectedUserCerts,
   seedCerts,
   seedUsersAndCerts,
+  makeMaliciousCert,
 
   makeAnimalsTrackedArray,
   makeExpectedAnimalTracked,
