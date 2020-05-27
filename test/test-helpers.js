@@ -235,6 +235,33 @@ function makeExpectedDive(dive) {
   };
 }
 
+function makeExpectedUserDives(userId, dives) {
+  const expectedDives = dives.filter((dive) => dive.user_id === userId);
+  return expectedDives.map((dive) => {
+    return {
+      id: dive.id,
+      user_id: dive.user_id,
+      dive_date: dive.dive_date,
+      country: dive.country,
+      region: dive.region,
+      dive_site: dive.dive_site,
+      max_depth: dive.max_depth,
+      duration: dive.duration,
+      water_temp: dive.water_temp,
+      dive_shop: dive.dive_shop,
+      guide: dive.guide,
+      buddy: dive.buddy,
+      viz: dive.viz,
+      dive_type: dive.dive_type,
+      drift_dive: dive.drift_dive,
+      night_dive: dive.night_dive,
+      description: dive.description,
+      animals_spotted: dive.animals_spotted,
+      rating: dive.rating,
+    };
+  });
+}
+
 function seedDives(db, dives) {
   return db.into("dives").insert(dives);
 }
@@ -244,6 +271,62 @@ function seedUsersAndDives(db, users, dives) {
     .into("users")
     .insert(users)
     .then(() => dives.length && db.into("dives").insert(dives));
+}
+
+function makeMaliciousDive(users) {
+  const maliciousDive = {
+    id: 911,
+    user_id: users[0].id,
+    dive_date: "dive date",
+    country: "dive country",
+    region: "dive region",
+    dive_site: '<script>alert("xss");</script>',
+    max_depth: '<script>alert("xss");</script>',
+    duration: '<script>alert("xss");</script>',
+    water_temp: '<script>alert("xss");</script>',
+    dive_shop: '<script>alert("xss");</script>',
+    guide: '<script>alert("xss");</script>',
+    buddy: '<script>alert("xss");</script>',
+    viz: "dive viz",
+    dive_type: "dive type",
+    drift_dive: "drift dive",
+    night_dive: "night dive",
+    description: '<script>alert("xss");</script>',
+    animals_spotted: [],
+    rating: "dive rating",
+  };
+  const expectedDive = {
+    id: 911,
+    user_id: users[0].id,
+    dive_date: "dive date",
+    country: "dive country",
+    region: "dive region",
+    dive_site: '&lt;script&gt;alert("xss");&lt;/script&gt;',
+    max_depth: '&lt;script&gt;alert("xss");&lt;/script&gt;',
+    duration: '&lt;script&gt;alert("xss");&lt;/script&gt;',
+    water_temp: '&lt;script&gt;alert("xss");&lt;/script&gt;',
+    dive_shop: '&lt;script&gt;alert("xss");&lt;/script&gt;',
+    guide: '&lt;script&gt;alert("xss");&lt;/script&gt;',
+    buddy: '&lt;script&gt;alert("xss");&lt;/script&gt;',
+    viz: "dive viz",
+    dive_type: "dive type",
+    drift_dive: "drift dive",
+    night_dive: "night dive",
+    description: '&lt;script&gt;alert("xss");&lt;/script&gt;',
+    animals_spotted: [],
+    rating: "dive rating",
+  };
+  return { maliciousDive, expectedDive };
+}
+
+function seedMaliciousDive(db, users, dive) {
+  return db
+    .into("users")
+    .insert(users)
+    .then(() =>
+      db.raw(`SELECT setval('users_id_seq', ?)`, [users[users.length - 1].id])
+    )
+    .then(() => db.into("dives").insert([dive]));
 }
 
 // CERTS
@@ -307,7 +390,7 @@ function seedUsersAndCerts(db, users, certs = []) {
 function makeMaliciousCert(users) {
   const maliciousCert = {
     id: 911,
-    user_id: 1,
+    user_id: users[0].id,
     agency: '<script>alert("xss");</script>',
     cert_level: "Course Director",
     cert_num: '<script>alert("xss");</script>',
@@ -315,7 +398,7 @@ function makeMaliciousCert(users) {
   };
   const expectedCert = {
     id: 911,
-    user_id: 1,
+    user_id: users[0].id,
     agency: '&lt;script&gt;alert("xss");&lt;/script&gt;',
     cert_level: "Course Director",
     cert_num: '&lt;script&gt;alert("xss");&lt;/script&gt;',
@@ -427,8 +510,11 @@ module.exports = {
 
   makeDivesArray,
   makeExpectedDive,
+  makeExpectedUserDives,
   seedDives,
   seedUsersAndDives,
+  makeMaliciousDive,
+  seedMaliciousDive,
 
   makeCertsArray,
   makeExpectedCert,
