@@ -3,7 +3,7 @@ const app = require("../src/app");
 const helpers = require("./test-helpers");
 const { TEST_DATABASE_URL } = require("../src/config");
 
-describe.only("dives endpoints", function () {
+describe("dives endpoints", function () {
   let db;
 
   const { testUsers, testDives } = helpers.makeFixtures();
@@ -77,6 +77,63 @@ describe.only("dives endpoints", function () {
             expect(res.body.rating).to.eql(expectedDive.rating);
           });
       });
+    });
+  });
+
+  describe(`POST /api/dives`, () => {
+    beforeEach("insert users", () => helpers.seedUsers(db, testUsers));
+    const testUser = testUsers[0];
+    console.log(testUser);
+    const requiredFields = [
+      "user_id",
+      "dive_date",
+      "country",
+      "region",
+      "dive_site",
+      "rating",
+    ];
+    requiredFields.forEach((field) => {
+      const newDive = {
+        user_id: testUser.id,
+        dive_date: "2020-05-05",
+        country: "test country",
+        region: "test region",
+        dive_site: "test site",
+        rating: 5,
+      };
+
+      it(`responds with 400 and an error when the '${field}' is missing`, () => {
+        delete newDive[field];
+        return supertest(app)
+          .post("/api/dives")
+          .send(newDive)
+          .expect(400, {
+            error: { message: `Missing '${field}' in request body` },
+          });
+      });
+    });
+
+    it(`creates a new dive, responding with 201 and the new dive`, () => {
+      const newDive = {
+        user_id: testUser.id,
+        dive_date: "2020-05-05",
+        country: "test country",
+        region: "test region",
+        dive_site: "test site",
+        rating: 5,
+      };
+      return supertest(app)
+        .post("/api/dives")
+        .send(newDive)
+        .expect(201)
+        .expect((res) => {
+          expect(res.body.user_id).to.eql(newDive.user_id);
+          expect(res.body.dive_date).to.eql(newDive.dive_date);
+          expect(res.body.country).to.eql(newDive.country);
+          expect(res.body.region).to.eql(newDive.region);
+          expect(res.body.dive_site).to.eql(newDive.dive_site);
+          expect(res.body.rating).to.eql(newDive.rating);
+        });
     });
   });
 });

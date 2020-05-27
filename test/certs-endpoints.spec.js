@@ -96,51 +96,51 @@ describe("certs endpoints", function () {
             error: { message: `Missing '${field}' in request body` },
           });
       });
+    });
 
-      it(`creates a cert, responding with 201 and the new cert`, () => {
-        const newCert = {
-          agency: "test agency",
-          cert_level: "test cert level",
-          cert_num: "test cert num",
-          cert_date: "test cert date",
-          user_id: testUser.id,
-        };
+    it(`creates a cert, responding with 201 and the new cert`, () => {
+      const newCert = {
+        agency: "test agency",
+        cert_level: "test cert level",
+        cert_num: "test cert num",
+        cert_date: "test cert date",
+        user_id: testUser.id,
+      };
 
-        return supertest(app)
-          .post("/api/certs")
-          .send(newCert)
-          .expect(201)
-          .expect((res) => {
-            expect(res.body.agency).to.eql(newCert.agency);
-            expect(res.body.cert_level).to.eql(newCert.cert_level);
-            expect(res.body.cert_num).to.eql(newCert.cert_num);
-            expect(res.body.cert_date).to.eql(newCert.cert_date);
-            expect(res.body.user_id).to.eql(newCert.user_id);
-          });
-        // .then((postRes) =>
-        //   supertest(app)
-        //     .get(`/api/certs/${postRes.body.id}`)
-        //     .expect(postRes.body)
-        // );
-      });
+      return supertest(app)
+        .post("/api/certs")
+        .send(newCert)
+        .expect(201)
+        .expect((res) => {
+          expect(res.body.agency).to.eql(newCert.agency);
+          expect(res.body.cert_level).to.eql(newCert.cert_level);
+          expect(res.body.cert_num).to.eql(newCert.cert_num);
+          expect(res.body.cert_date).to.eql(newCert.cert_date);
+          expect(res.body.user_id).to.eql(newCert.user_id);
+        });
+      // .then((postRes) =>
+      //   supertest(app)
+      //     .get(`/api/certs/${postRes.body.id}`)
+      //     .expect(postRes.body)
+      // );
+    });
 
-      it(`removes XSS attack content from response`, () => {
-        const { maliciousCert, expectedCert } = helpers.makeMaliciousCert(
-          testUsers
-        );
+    it(`removes XSS attack content from response`, () => {
+      const { maliciousCert, expectedCert } = helpers.makeMaliciousCert(
+        testUsers
+      );
 
-        return supertest(app)
-          .post("/api/certs")
-          .send(maliciousCert)
-          .expect(201)
-          .expect((res) => {
-            expect(res.body.agency).to.eql(expectedCert.agency);
-            expect(res.body.cert_level).to.eql(expectedCert.cert_level);
-            expect(res.body.cert_num).to.eql(expectedCert.cert_num);
-            expect(res.body.cert_date).to.eql(expectedCert.cert_date);
-            expect(res.body.user_id).to.eql(expectedCert.user_id);
-          });
-      });
+      return supertest(app)
+        .post("/api/certs")
+        .send(maliciousCert)
+        .expect(201)
+        .expect((res) => {
+          expect(res.body.agency).to.eql(expectedCert.agency);
+          expect(res.body.cert_level).to.eql(expectedCert.cert_level);
+          expect(res.body.cert_num).to.eql(expectedCert.cert_num);
+          expect(res.body.cert_date).to.eql(expectedCert.cert_date);
+          expect(res.body.user_id).to.eql(expectedCert.user_id);
+        });
     });
   });
 

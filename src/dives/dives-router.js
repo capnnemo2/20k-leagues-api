@@ -88,6 +88,7 @@ divesRouter
   })
   .patch(jsonParser, (req, res, next) => {
     const {
+      user_id,
       dive_date,
       country,
       region,
@@ -107,6 +108,7 @@ divesRouter
       rating,
     } = req.body;
     const diveToUpdate = {
+      user_id,
       dive_date,
       country,
       region,
@@ -127,10 +129,10 @@ divesRouter
     };
 
     const numberOfValues = Object.values(diveToUpdate).filter(Boolean).length;
-    if (numberOfValues < 5) {
+    if (numberOfValues < 6) {
       return res.status(400).json({
         error: {
-          message: `Request body must contain 'dive_date', 'dive_site', 'country', 'region', and 'rating'`,
+          message: `Request body must contain 'user_id', 'dive_date', 'dive_site', 'country', 'region', and 'rating'`,
         },
       });
     }
