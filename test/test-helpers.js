@@ -164,11 +164,11 @@ function seedMaliciousUser(db, user) {
 }
 
 // DIVES
-function makeDivesArray() {
+function makeDivesArray(users) {
   return [
     {
       id: 1,
-      user_id: 1,
+      user_id: users[0].id,
       dive_date: "2020-05-04",
       country: "Cayman Islands",
       region: "Grand Cayman, West",
@@ -189,7 +189,7 @@ function makeDivesArray() {
     },
     {
       id: 2,
-      user_id: 1,
+      user_id: users[users.length - 1].id,
       dive_date: "2020-05-05",
       country: "Cayman Islands",
       region: "Grand Cayman, West",
@@ -377,7 +377,7 @@ function makeFixtures() {
   const testCountries = makeCountriesArray();
   const testAnimals = makeAnimalsArray();
   const testSpecialties = makeSpecialtiesArray();
-  const testDives = makeDivesArray();
+  const testDives = makeDivesArray(testUsers);
   const testCerts = makeCertsArray(testUsers);
   const testAnimalsTracked = makeAnimalsTrackedArray();
 

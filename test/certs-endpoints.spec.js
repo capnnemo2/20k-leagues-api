@@ -32,6 +32,7 @@ describe("certs endpoints", function () {
     context(`Given there are certs in the database`, () => {
       beforeEach("insert certs", () => {
         // helpers.seedCerts(db, testCerts);
+        // something isn't working here?
         helpers.seedUsersAndCerts(db, testUsers, testCerts);
       });
 

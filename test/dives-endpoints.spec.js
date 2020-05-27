@@ -3,10 +3,10 @@ const app = require("../src/app");
 const helpers = require("./test-helpers");
 const { TEST_DATABASE_URL } = require("../src/config");
 
-describe("dives endpoints", function () {
+describe.only("dives endpoints", function () {
   let db;
 
-  const { testDives } = helpers.makeFixtures();
+  const { testUsers, testDives } = helpers.makeFixtures();
 
   before("make knex instance", () => {
     db = knex({
@@ -31,7 +31,8 @@ describe("dives endpoints", function () {
 
     context(`Given there are dives in the database`, () => {
       beforeEach("insert dives", () => {
-        return helpers.seedDives(db, testDives);
+        // return helpers.seedDives(db, testDives);
+        return helpers.seedUsersAndDives(db, testUsers, testDives);
       });
 
       it(`responds with 200 and all of the dives`, () => {
