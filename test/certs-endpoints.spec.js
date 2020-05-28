@@ -3,7 +3,7 @@ const app = require("../src/app");
 const helpers = require("./test-helpers");
 const { TEST_DATABASE_URL } = require("../src/config");
 
-describe("certs endpoints", function () {
+describe.only("certs endpoints", function () {
   let db;
 
   const { testUsers, testCerts } = helpers.makeFixtures();
@@ -31,7 +31,6 @@ describe("certs endpoints", function () {
 
     context(`Given there are certs in the database`, () => {
       beforeEach("insert certs", () => {
-        // helpers.seedCerts(db, testCerts);
         // something isn't working here?
         helpers.seedUsersAndCerts(db, testUsers, testCerts);
       });
@@ -49,6 +48,9 @@ describe("certs endpoints", function () {
         testUsers
       );
       beforeEach("insert malicious cert", () => {
+        console.log("users: ", testUsers);
+        console.log("mal cert: ", maliciousCert);
+        console.log("expected cert: ", expectedCert);
         return helpers.seedMaliciousCert(db, testUsers, maliciousCert);
       });
 
@@ -57,11 +59,11 @@ describe("certs endpoints", function () {
           .get("/api/certs")
           .expect(200)
           .expect((res) => {
-            expect(res.body.agency).to.eql(expectedCert.agency);
-            expect(res.body.cert_level).to.eql(expectedCert.cert_level);
-            expect(res.body.cert_num).to.eql(expectedCert.cert_num);
-            expect(res.body.cert_date).to.eql(expectedCert.cert_date);
-            expect(res.body.user_id).to.eql(expectedCert.user_id);
+            expect(res.body[0].agency).to.eql(expectedCert.agency);
+            expect(res.body[0].cert_level).to.eql(expectedCert.cert_level);
+            expect(res.body[0].cert_num).to.eql(expectedCert.cert_num);
+            expect(res.body[0].cert_date).to.eql(expectedCert.cert_date);
+            expect(res.body[0].user_id).to.eql(expectedCert.user_id);
           });
       });
     });

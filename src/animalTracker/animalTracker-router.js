@@ -29,7 +29,6 @@ animalTrackerRouter
     );
   })
   .get((req, res, next) => {
-    console.log(req.params.animal);
     res.json(res.animal);
   });
 

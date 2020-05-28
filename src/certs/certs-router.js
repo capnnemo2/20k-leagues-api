@@ -9,7 +9,7 @@ certsRouter
   .get((req, res, next) => {
     CertsService.getAllCerts(req.app.get("db"))
       .then((certs) => {
-        res.json(certs);
+        res.json(certs.map(CertsService.serializeCert));
       })
       .catch(next);
   })
