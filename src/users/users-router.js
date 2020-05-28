@@ -1,6 +1,5 @@
 const express = require("express");
 const UsersService = require("./users-service");
-const path = require("path");
 
 const usersRouter = express.Router();
 const jsonParser = express.json();
@@ -33,11 +32,7 @@ usersRouter
 
     UsersService.insertUser(req.app.get("db"), newUser)
       .then((user) => {
-        res
-          .status(201)
-          //   I think I want this to navigate to the Login page?
-          //   .location(path.posix.join(req.originalUrl, `/${user.id}`))
-          .json(UsersService.serializeUser(user));
+        res.status(201).json(UsersService.serializeUser(user));
       })
       .catch(next);
   });
@@ -82,13 +77,11 @@ usersRouter
 
     const numberOfValues = Object.values(userToUpdate).filter(Boolean).length;
     if (numberOfValues < 3) {
-      return res
-        .status(400)
-        .json({
-          error: {
-            message: `Request body must contain 'first_name', 'email', and 'password'`,
-          },
-        });
+      return res.status(400).json({
+        error: {
+          message: `Request body must contain 'first_name', 'email', and 'password'`,
+        },
+      });
     }
 
     UsersService.updateUser(req.app.get("db"), req.params.user_id, userToUpdate)

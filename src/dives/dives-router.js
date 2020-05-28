@@ -65,9 +65,6 @@ divesRouter
       .catch(next);
   });
 
-// is this how I would GET all dives for a given user?
-divesRouter.route("/:user_id");
-
 divesRouter
   .route("/:dive_id")
   .all((req, res, next) => {

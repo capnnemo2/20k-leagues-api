@@ -31,7 +31,6 @@ certsRouter
   });
 
 certsRouter
-  // if I'm going for user specific certs, does this become '/:user_id/:cert_id' ?
   .route("/:cert_id")
   .all((req, res, next) => {
     CertsService.getById(req.app.get("db"), req.params.cert_id)
@@ -57,8 +56,6 @@ certsRouter
       .catch(next);
   });
 
-// I need to all the certs for a given user
-
-// certsRouter.route("/:user_id");
+certsRouter.route("/");
 
 module.exports = certsRouter;
