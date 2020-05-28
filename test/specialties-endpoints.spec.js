@@ -38,4 +38,23 @@ describe("specialties endpoints", function () {
       });
     });
   });
+
+  describe(`GET /api/specialties/:spec_id`, () => {
+    context(`Given there are specialties in the database`, () => {
+      beforeEach("insert specialties", () => {
+        return helpers.seedSpecialties(db, testSpecialties);
+      });
+
+      it(`responds with 200 and the specified specialty`, () => {
+        const specId = 2;
+        const expectedSpec = helpers.makeExpectedSpecialty(
+          testSpecialties[specId - 1]
+        );
+
+        return supertest(app)
+          .get(`/api/specialties/${specId}`)
+          .expect(200, expectedSpec);
+      });
+    });
+  });
 });

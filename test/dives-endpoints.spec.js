@@ -82,7 +82,6 @@ describe("dives endpoints", function () {
   describe(`POST /api/dives`, () => {
     beforeEach("insert users", () => helpers.seedUsers(db, testUsers));
     const testUser = testUsers[0];
-    console.log(testUser);
     const requiredFields = [
       "user_id",
       "dive_date",

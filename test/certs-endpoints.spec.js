@@ -31,7 +31,6 @@ describe("certs endpoints", function () {
 
     context(`Given there are certs in the database`, () => {
       beforeEach("insert certs", () => {
-        // maybesomething isn't working here?
         return helpers.seedUsersAndCerts(db, testUsers, testCerts);
       });
 
@@ -39,8 +38,6 @@ describe("certs endpoints", function () {
         const expectedCerts = testCerts.map((cert) =>
           helpers.makeExpectedCert(cert)
         );
-        console.log("expected certs: ", expectedCerts);
-        console.log("test certs: ", testCerts);
         return supertest(app).get("/api/certs").expect(200, expectedCerts);
       });
     });

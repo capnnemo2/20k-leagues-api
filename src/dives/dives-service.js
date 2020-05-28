@@ -25,7 +25,6 @@ const DivesService = {
       country: d.country,
       region: d.region,
       dive_site: xss(d.dive_site),
-      // do we need to do xss for all open input fields, even if they're marked as number/integer?
       max_depth: xss(d.max_depth),
       duration: xss(d.duration),
       water_temp: xss(d.water_temp),

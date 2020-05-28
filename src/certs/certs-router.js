@@ -57,7 +57,6 @@ certsRouter
       .catch(next);
   });
 
-// I never need to grab ALL certs
 // I need to all the certs for a given user
 
 // certsRouter.route("/:user_id");
