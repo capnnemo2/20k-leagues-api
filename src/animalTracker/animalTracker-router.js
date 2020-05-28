@@ -30,13 +30,22 @@ animalTrackerRouter
       newAnimalTracked
     )
       .then((animal) => {
-        res.status(201).json();
+        res.status(201).json(animal);
       })
       .catch(next);
   })
   .delete(jsonParser, (req, res, next) => {
     const { animal, region } = req.body;
-    console.log(req.body);
+    const animalInstance = { animal, region };
+
+    for (const [key, value] of Object.entries(animalInstance)) {
+      if (value == null) {
+        return res
+          .status(400)
+          .json({ error: { message: `Missing '${key}' in request body` } });
+      }
+    }
+
     AnimalTrackerService.updateAnimalsTracked(req.app.get("db"), animal, region)
       .then((numRowsAffected) => {
         res.status(204).end();
