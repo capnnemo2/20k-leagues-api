@@ -9,7 +9,7 @@ divesRouter
   .get((req, res, next) => {
     DivesService.getAllDives(req.app.get("db"))
       .then((dives) => {
-        res.json(dives);
+        res.json(dives.map(DivesService.serializeDive));
       })
       .catch(next);
   })
@@ -32,8 +32,9 @@ divesRouter
       description,
       animals_spotted,
       rating,
+      user_id,
     } = req.body;
-    const newDive = { dive_date, country, region, dive_site, rating };
+    const newDive = { user_id, dive_date, country, region, dive_site, rating };
 
     for (const [key, value] of Object.entries(newDive)) {
       if (value == null) {
@@ -55,14 +56,11 @@ divesRouter
     newDive.night_dive = night_dive;
     newDive.description = description;
     newDive.animals_spotted = animals_spotted;
+    newDive.user_id = user_id;
 
     DivesService.insertDive(req.app.get("db"), newDive)
       .then((dive) => {
-        res
-          .status(201)
-          // location navigation should go to Log page...
-          // .location(path.posix.join(req.originalUrl))
-          .json(DivesService.serializeDive(dive));
+        res.status(201).json(DivesService.serializeDive(dive));
       })
       .catch(next);
   });

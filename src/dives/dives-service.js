@@ -29,7 +29,7 @@ const DivesService = {
       max_depth: xss(d.max_depth),
       duration: xss(d.duration),
       water_temp: xss(d.water_temp),
-
+      user_id: d.user_id,
       dive_shop: xss(d.dive_shop),
       guide: xss(d.guide),
       buddy: xss(d.buddy),

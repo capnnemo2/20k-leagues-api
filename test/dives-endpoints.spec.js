@@ -56,25 +56,24 @@ describe("dives endpoints", function () {
           .get("/api/dives")
           .expect(200)
           .expect((res) => {
-            expect(res.body.dive_date).to.eql(expectedDive.dive_date);
-            expect(res.body.country).to.eql(expectedDive.country);
-            expect(res.body.region).to.eql(expectedDive.region);
-            expect(res.body.dive_site).to.eql(expectedDive.dive_site);
-            expect(res.body.max_depth).to.eql(expectedDive.max_depth);
-            expect(res.body.duration).to.eql(expectedDive.duration);
-            expect(res.body.water_temp).to.eql(expectedDive.water_temp);
-            expect(res.body.dive_shop).to.eql(expectedDive.dive_shop);
-            expect(res.body.guide).to.eql(expectedDive.guide);
-            expect(res.body.buddy).to.eql(expectedDive.buddy);
-            expect(res.body.viz).to.eql(expectedDive.viz);
-            expect(res.body.dive_type).to.eql(expectedDive.dive_type);
-            expect(res.body.drift_dive).to.eql(expectedDive.drift_dive);
-            expect(res.body.night_dive).to.eql(expectedDive.night_dive);
-            expect(res.body.description).to.eql(expectedDive.description);
-            expect(res.body.animals_spotted).to.eql(
-              expectedDive.animals_spotted
-            );
-            expect(res.body.rating).to.eql(expectedDive.rating);
+            const body = res.body[0];
+            expect(body.dive_date).to.eql(expectedDive.dive_date);
+            expect(body.country).to.eql(expectedDive.country);
+            expect(body.region).to.eql(expectedDive.region);
+            expect(body.dive_site).to.eql(expectedDive.dive_site);
+            expect(body.max_depth).to.eql(expectedDive.max_depth);
+            expect(body.duration).to.eql(expectedDive.duration);
+            expect(body.water_temp).to.eql(expectedDive.water_temp);
+            expect(body.dive_shop).to.eql(expectedDive.dive_shop);
+            expect(body.guide).to.eql(expectedDive.guide);
+            expect(body.buddy).to.eql(expectedDive.buddy);
+            expect(body.viz).to.eql(expectedDive.viz);
+            expect(body.dive_type).to.eql(expectedDive.dive_type);
+            expect(body.drift_dive).to.eql(expectedDive.drift_dive);
+            expect(body.night_dive).to.eql(expectedDive.night_dive);
+            expect(body.description).to.eql(expectedDive.description);
+            expect(body.animals_spotted).to.eql(expectedDive.animals_spotted);
+            expect(body.rating).to.eql(expectedDive.rating);
           });
       });
     });
@@ -116,7 +115,7 @@ describe("dives endpoints", function () {
     it(`creates a new dive, responding with 201 and the new dive`, () => {
       const newDive = {
         user_id: testUser.id,
-        dive_date: "2020-05-05",
+        dive_date: "2020-05-05T07:00:00.000Z",
         country: "test country",
         region: "test region",
         dive_site: "test site",

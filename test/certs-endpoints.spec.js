@@ -3,7 +3,7 @@ const app = require("../src/app");
 const helpers = require("./test-helpers");
 const { TEST_DATABASE_URL } = require("../src/config");
 
-describe.only("certs endpoints", function () {
+describe("certs endpoints", function () {
   let db;
 
   const { testUsers, testCerts } = helpers.makeFixtures();
@@ -31,14 +31,16 @@ describe.only("certs endpoints", function () {
 
     context(`Given there are certs in the database`, () => {
       beforeEach("insert certs", () => {
-        // something isn't working here?
-        helpers.seedUsersAndCerts(db, testUsers, testCerts);
+        // maybesomething isn't working here?
+        return helpers.seedUsersAndCerts(db, testUsers, testCerts);
       });
 
       it(`responds with 200 and all of the certs`, () => {
         const expectedCerts = testCerts.map((cert) =>
           helpers.makeExpectedCert(cert)
         );
+        console.log("expected certs: ", expectedCerts);
+        console.log("test certs: ", testCerts);
         return supertest(app).get("/api/certs").expect(200, expectedCerts);
       });
     });
@@ -48,9 +50,6 @@ describe.only("certs endpoints", function () {
         testUsers
       );
       beforeEach("insert malicious cert", () => {
-        console.log("users: ", testUsers);
-        console.log("mal cert: ", maliciousCert);
-        console.log("expected cert: ", expectedCert);
         return helpers.seedMaliciousCert(db, testUsers, maliciousCert);
       });
 

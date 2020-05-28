@@ -31,5 +31,6 @@ animalTrackerRouter
   .get((req, res, next) => {
     res.json(res.animal);
   });
+// PATCH endpoint
 
 module.exports = animalTrackerRouter;
