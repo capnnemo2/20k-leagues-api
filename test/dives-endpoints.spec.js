@@ -134,4 +134,148 @@ describe("dives endpoints", function () {
         });
     });
   });
+
+  describe(`GET /api/dives/:dive_id`, () => {
+    context(`Given no dives`, () => {
+      it(`responds with 404`, () => {
+        const diveId = 1234567;
+        return supertest(app)
+          .get(`/api/dives/${diveId}`)
+          .expect(404, { error: { message: `Dive doesn't exist` } });
+      });
+    });
+
+    context(`Given there are dives in the database`, () => {
+      beforeEach("insert dives", () => {
+        return helpers.seedUsersAndDives(db, testUsers, testDives);
+      });
+
+      it(`responds with 200 and the specified dive`, () => {
+        const diveId = 2;
+        const expectedDive = helpers.makeExpectedDive(testDives[diveId - 1]);
+
+        return supertest(app)
+          .get(`/api/dives/${diveId}`)
+          .expect(200, expectedDive);
+      });
+    });
+
+    context(`Given an XSS attack dive`, () => {
+      const { maliciousDive, expectedDive } = helpers.makeMaliciousDive(
+        testUsers
+      );
+      beforeEach("insert malicious dive", () => {
+        return helpers.seedMaliciousDive(db, testUsers, maliciousDive);
+      });
+
+      it(`removes XSS attack content`, () => {
+        return supertest(app)
+          .get(`/api/dives/${maliciousDive.id}`)
+          .expect(200)
+          .expect((res) => {
+            expect(res.body.dive_date).to.eql(expectedDive.dive_date);
+            expect(res.body.country).to.eql(expectedDive.country);
+            expect(res.body.region).to.eql(expectedDive.region);
+            expect(res.body.dive_site).to.eql(expectedDive.dive_site);
+            expect(res.body.max_depth).to.eql(expectedDive.max_depth);
+            expect(res.body.duration).to.eql(expectedDive.duration);
+            expect(res.body.water_temp).to.eql(expectedDive.water_temp);
+            expect(res.body.dive_shop).to.eql(expectedDive.dive_shop);
+            expect(res.body.guide).to.eql(expectedDive.guide);
+            expect(res.body.buddy).to.eql(expectedDive.buddy);
+            expect(res.body.viz).to.eql(expectedDive.viz);
+            expect(res.body.dive_type).to.eql(expectedDive.dive_type);
+            expect(res.body.drift_dive).to.eql(expectedDive.drift_dive);
+            expect(res.body.night_dive).to.eql(expectedDive.night_dive);
+            expect(res.body.description).to.eql(expectedDive.description);
+            expect(res.body.animals_spotted).to.eql(
+              expectedDive.animals_spotted
+            );
+            expect(res.body.rating).to.eql(expectedDive.rating);
+          });
+      });
+    });
+  });
+
+  describe(`PATCH /api/dives/:dive_id`, () => {
+    context(`Given no dives`, () => {
+      it(`responds with 404`, () => {
+        const diveId = 1234567;
+        return supertest(app)
+          .patch(`/api/dives/${diveId}`)
+          .expect(404, { error: { message: `Dive doesn't exist` } });
+      });
+    });
+
+    context(`Given there are dives in the database`, () => {
+      const testDives = helpers.makeDivesArray(testUsers);
+      beforeEach("insert dives", () => {
+        return helpers.seedUsersAndDives(db, testUsers, testDives);
+      });
+
+      it(`responds with 204 and updates the dive`, () => {
+        const idToUpdate = 2;
+        const updatedDive = {
+          user_id: testUsers[0].id,
+          dive_date: "2020-05-10T07:00:00.000Z",
+          country: "dive country",
+          region: "dive region",
+          dive_site: "dive site",
+          max_depth: "5",
+          duration: "5",
+          water_temp: "5",
+          dive_shop: "dive shop",
+          guide: "guide",
+          buddy: "buddy",
+          viz: 5,
+          dive_type: "dive type",
+          drift_dive: "true",
+          night_dive: "false",
+          description: "a dive",
+          animals_spotted: [1, 2],
+          rating: 5,
+        };
+
+        const expectedDive = { ...testDives[idToUpdate - 1], ...updatedDive };
+
+        return supertest(app)
+          .patch(`/api/dives/${idToUpdate}`)
+          .send(updatedDive)
+          .expect(204)
+          .then((res) => {
+            supertest(app).get(`/api/dives/${idToUpdate}`).expect(expectedDive);
+          });
+      });
+    });
+  });
+
+  describe(`DELETE /api/dives/:dive_id`, () => {
+    context(`Given no dives`, () => {
+      it(`responds with 404`, () => {
+        const diveId = 1234567;
+        return supertest(app)
+          .delete(`/api/dives/${diveId}`)
+          .expect(404, { error: { message: `Dive doesn't exist` } });
+      });
+    });
+
+    context(`Given there are dives in the database`, () => {
+      const testDives = helpers.makeDivesArray(testUsers);
+      beforeEach("insert dives", () => {
+        return helpers.seedUsersAndDives(db, testUsers, testDives);
+      });
+
+      it(`responds with 204 and removes the dive`, () => {
+        const idToRemove = 2;
+        const expectedDives = testDives.filter((d) => d.id !== idToRemove);
+
+        return supertest(app)
+          .delete(`/api/dives/${idToRemove}`)
+          .expect(204)
+          .then((res) => {
+            supertest(app).get(`/api/dives`).expect(expectedDives);
+          });
+      });
+    });
+  });
 });
