@@ -56,6 +56,7 @@ animalTrackerRouter
 animalTrackerRouter.route("/animal/:animal").get((req, res, next) => {
   AnimalTrackerService.getByAnimal(req.app.get("db"), req.params.animal).then(
     (animal) => {
+      console.log("this ran", animal);
       if (!animal) {
         return res
           .status(404)
@@ -83,7 +84,7 @@ animalTrackerRouter.route("/region/:region").get((req, res, next) => {
   );
 });
 
-// this works, but I don't need it, also conflicts
+// this works, but I don't need it
 animalTrackerRouter.route("/:animal_id").get((req, res, next) => {
   AnimalTrackerService.getById(req.app.get("db"), req.params.animal_id).then(
     (entry) => {
