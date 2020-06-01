@@ -48,7 +48,11 @@ animalTrackerRouter
 
     AnimalTrackerService.updateAnimalsTracked(req.app.get("db"), animal, region)
       .then((numRowsAffected) => {
-        res.status(204).end();
+        if (!numRowsAffected) {
+          res.status(404).json({ error: { message: "Animal doesn't exist" } });
+        } else {
+          res.status(204).end();
+        }
       })
       .catch(next);
   });
@@ -56,7 +60,8 @@ animalTrackerRouter
 animalTrackerRouter.route("/animal/:animal").get((req, res, next) => {
   AnimalTrackerService.getByAnimal(req.app.get("db"), req.params.animal).then(
     (animal) => {
-      if (!animal) {
+      console.log({ animal });
+      if (!animal.length) {
         return res
           .status(404)
           .json({ error: { message: `Animal doesn't exist` } });
@@ -71,7 +76,7 @@ animalTrackerRouter.route("/animal/:animal").get((req, res, next) => {
 animalTrackerRouter.route("/region/:region").get((req, res, next) => {
   AnimalTrackerService.getByRegion(req.app.get("db"), req.params.region).then(
     (region) => {
-      if (!region) {
+      if (!region.length) {
         return res
           .status(404)
           .json({ error: { message: `Region doesn't exist` } });

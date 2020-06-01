@@ -8,6 +8,7 @@ describe("Auth endpoints", function () {
 
   const { testUsers } = helpers.makeFixtures();
   const testUser = testUsers[0];
+  let authToken;
 
   before("make knex instance", () => {
     db = knex({
@@ -20,6 +21,20 @@ describe("Auth endpoints", function () {
   after("disconnect from db", () => db.destroy());
 
   before("cleanup", () => helpers.cleanTables(db));
+
+  /*before("logging user in", () => {
+    supertest(app)
+      .post("/api/users")
+      .send(testUser)
+      .then((user) => {
+        supertest(app)
+          .post("/api/auth/login")
+          .send(testUser)
+          .then((loggedInUser) => {
+            authToken = loggedInUser.authToken;
+          });
+      });
+  });*/
 
   afterEach("cleanup", () => helpers.cleanTables(db));
 

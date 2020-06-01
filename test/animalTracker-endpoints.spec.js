@@ -3,7 +3,7 @@ const app = require("../src/app");
 const helpers = require("./test-helpers");
 const { TEST_DATABASE_URL } = require("../src/config");
 
-describe("animalTracker", function () {
+describe.only("animalTracker", function () {
   let db;
 
   const { testAnimalsTracked } = helpers.makeFixtures();
