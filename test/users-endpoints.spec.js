@@ -1,4 +1,5 @@
 const knex = require("knex");
+const bcrypt = require("bcryptjs");
 const app = require("../src/app");
 const helpers = require("./test-helpers");
 const { TEST_DATABASE_URL } = require("../src/config");
@@ -7,6 +8,7 @@ describe("users endpoints", function () {
   let db;
 
   const { testUsers } = helpers.makeFixtures();
+  const testUser = testUsers[0];
 
   before("make knex instance", () => {
     db = knex({
@@ -62,54 +64,151 @@ describe("users endpoints", function () {
     });
   });
 
-  describe(`POST /api/users`, () => {
-    const requiredFields = ["first_name", "email", "password"];
-    requiredFields.forEach((field) => {
-      const newUser = {
-        first_name: "test first name",
-        email: "test email",
-        password: "test password",
-      };
-      it(`responds with 400 and an error when the ${field} is missing`, () => {
-        delete newUser[field];
+  describe.only(`POST /api/users`, () => {
+    context(`User validation`, () => {
+      beforeEach("insert users", () => helpers.seedUsers(db, testUsers));
+
+      const requiredFields = ["first_name", "email", "password"];
+      requiredFields.forEach((field) => {
+        const newUser = {
+          first_name: "test first name",
+          email: "test email",
+          password: "test password",
+        };
+        it(`responds with 400 and an error when the ${field} is missing`, () => {
+          delete newUser[field];
+          return supertest(app)
+            .post("/api/users")
+            .send(newUser)
+            .expect(400, {
+              error: { message: `Missing '${field}' in request body` },
+            });
+        });
+      });
+
+      it(`responds 400 'Password must be longer than 8 characters' when empty password`, () => {
+        const userShortPassword = {
+          email: "test email",
+          password: "1234567",
+          first_name: "test first_name",
+        };
         return supertest(app)
           .post("/api/users")
-          .send(newUser)
+          .send(userShortPassword)
           .expect(400, {
-            error: { message: `Missing '${field}' in request body` },
+            error: { message: `Password must be longer than 8 characters` },
+          });
+      });
+
+      it(`responds with 400 'Password must be less than 72 characters' when long password`, () => {
+        const userLongPassword = {
+          email: "test email",
+          password: "*".repeat(73),
+          first_name: "test first_name",
+        };
+        return supertest(app)
+          .post("/api/users")
+          .send(userLongPassword)
+          .expect(400, {
+            error: { message: `Password must be less than 72 characters` },
+          });
+      });
+
+      it(`responds with 400 error when password starts with spaces`, () => {
+        const userPasswordStartsSpaces = {
+          email: "test email",
+          password: " 1Aa!2Bb@",
+          first_name: "test first_name",
+        };
+        return supertest(app)
+          .post("/api/users")
+          .send(userPasswordStartsSpaces)
+          .expect(400, {
+            error: {
+              message: `Password must not start or end with empty spaces`,
+            },
+          });
+      });
+
+      it(`responds with 400 error when password ends with spaces`, () => {
+        const userPasswordEndsSpaces = {
+          email: "test email",
+          password: "1Aa!2Bb@ ",
+          first_name: "test first_name",
+        };
+        return supertest(app)
+          .post("/api/users")
+          .send(userPasswordEndsSpaces)
+          .expect(400, {
+            error: {
+              message: `Password must not start or end with empty spaces`,
+            },
+          });
+      });
+
+      it(`responds 400 error when password isn't complex enough`, () => {
+        const userPasswordNotComplex = {
+          email: "test email",
+          password: "11AAaabb",
+          first_name: "test first_name",
+        };
+        return supertest(app)
+          .post("/api/users")
+          .send(userPasswordNotComplex)
+          .expect(400, {
+            error: {
+              message: `Password must contain 1 upper case, lower case, number, and special character`,
+            },
+          });
+      });
+
+      it(`responds 400 'Email already exists in database' when email isn't unique`, () => {
+        const duplicateUser = {
+          email: testUser.email,
+          password: "11AAaa!!",
+          first_name: "test first_name",
+        };
+        return supertest(app)
+          .post("/api/users")
+          .send(duplicateUser)
+          .expect(400, {
+            error: { message: `Email already exists in database` },
           });
       });
     });
 
-    // this test does not include a last bit to test navigating to the login page
-    it(`creates a user, responding with 201`, () => {
-      const newUser = {
-        first_name: "test first name",
-        email: "test email",
-        password: "test password",
-      };
-      return supertest(app)
-        .post("/api/users")
-        .send(newUser)
-        .expect(201)
-        .expect((res) => {
-          expect(res.body.first_name).to.eql(newUser.first_name);
-          expect(res.body.email).to.eql(newUser.email);
-          expect(res.body.password).to.eql(newUser.password);
-        });
-    });
-
-    it(`removes xss attack content from response`, () => {
-      const { maliciousUser, expectedUser } = helpers.makeMaliciousUser();
-      return supertest(app)
-        .post(`/api/users`)
-        .send(maliciousUser)
-        .expect(201)
-        .expect((res) => {
-          expect(res.body.first_name).to.eql(expectedUser.first_name);
-          expect(res.body.email).to.eql(expectedUser.email);
-          expect(res.body.password).to.eql(expectedUser.password);
-        });
+    context(`Happy path`, () => {
+      it(`creates a user, storing bcrypted password, responding with 201`, () => {
+        const newUser = {
+          first_name: "test first name",
+          email: "test email",
+          password: "11AAaa!!",
+        };
+        return supertest(app)
+          .post("/api/users")
+          .send(newUser)
+          .expect(201)
+          .expect((res) => {
+            expect(res.body).to.have.property("id");
+            expect(res.body.first_name).to.eql(newUser.first_name);
+            expect(res.body.email).to.eql(newUser.email);
+          })
+          .expect((res) =>
+            db
+              .from("users")
+              .select("*")
+              .where({ id: res.body.id })
+              .first()
+              .then((row) => {
+                expect(row.email).to.eql(newUser.email);
+                expect(row.first_name).to.eql(newUser.first_name);
+                return bcrypt.compare(newUser.password, row.password);
+              })
+              .then((compareMatch) => {
+                expect(compareMatch).to.be.true;
+              })
+          );
+      });
     });
   });
 

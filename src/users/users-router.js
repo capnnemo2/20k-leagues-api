@@ -25,16 +25,39 @@ usersRouter
       }
     }
 
-    newUser.wishlist = wishlist;
-    newUser.specialties = [];
-    newUser.instructor_specialties = [];
-    newUser.wishlist_fulfilled = [];
+    const passwordError = UsersService.validatePassword(password);
 
-    UsersService.insertUser(req.app.get("db"), newUser)
-      .then((user) => {
-        res.status(201).json(UsersService.serializeUser(user));
-      })
-      .catch(next);
+    if (passwordError)
+      return res.status(400).json({ error: { message: passwordError } });
+
+    UsersService.hasUserWithEmail(req.app.get("db"), email).then(
+      (hasUserWithEmail) => {
+        if (hasUserWithEmail)
+          return res
+            .status(400)
+            .json({ error: { message: `Email already exists in database` } });
+
+        return UsersService.hashPassword(password)
+          .then((hashedPassword) => {
+            const newUser = {
+              first_name,
+              email,
+              password: hashedPassword,
+              wishlist: wishlist,
+              specialties: [],
+              instructor_specialties: [],
+              wishlist_fulfilled: [],
+            };
+
+            return UsersService.insertUser(req.app.get("db"), newUser).then(
+              (user) => {
+                res.status(201).json(UsersService.serializeUser(user));
+              }
+            );
+          })
+          .catch(next);
+      }
+    );
   });
 
 usersRouter
