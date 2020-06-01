@@ -64,7 +64,7 @@ describe("users endpoints", function () {
     });
   });
 
-  describe.only(`POST /api/users`, () => {
+  describe(`POST /api/users`, () => {
     context(`User validation`, () => {
       beforeEach("insert users", () => helpers.seedUsers(db, testUsers));
 

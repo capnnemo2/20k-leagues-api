@@ -14,7 +14,7 @@ INSERT INTO users (first_name, email, password, specialties, instructor_specialt
     (
         'Bob',
         'bob@email.com',
-        'password',
+        '$2a$12$gLWI9sCiD8ueE01zJgO/QOiIFdv21qnw6u0eAl2fu5qK8bbXXqCJ2',
         '{
             "2",
             "5",
