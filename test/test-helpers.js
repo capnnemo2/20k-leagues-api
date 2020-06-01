@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 // COUNTRIES
@@ -123,12 +124,15 @@ function makeUsersArray() {
   ];
 }
 
+// the bcrypt hash doesn't match, probably because it is being run two different times, independent of each other, rather than checking that the same tiem being run matches itself.
+// not sure how to resolve
 function makeExpectedUser(user) {
   return {
     id: user.id,
     first_name: user.first_name,
     email: user.email,
     password: user.password,
+    // password: bcrypt.hashSync(user.password, 1),
     specialties: user.specialties,
     instructor_specialties: user.instructor_specialties,
     wishlist: user.wishlist,
@@ -136,8 +140,20 @@ function makeExpectedUser(user) {
   };
 }
 
+// the bcrypt hash doesn't match, probably because it is being run two different times, independent of each other, rather than checking that the same tiem being run matches itself.
+// not sure how to resolve
 function seedUsers(db, users) {
-  return db.into("users").insert(users);
+  const preppedUsers = users.map((user) => ({
+    ...user,
+    password: bcrypt.hashSync(user.password, 1),
+  }));
+
+  return db
+    .into("users")
+    .insert(preppedUsers)
+    .then(() =>
+      db.raw(`SELECT setval('users_id_seq', ?)`, [users[users.length - 1].id])
+    );
 }
 
 function makeMaliciousUser() {
@@ -171,7 +187,7 @@ function makeDivesArray(users) {
     {
       id: 1,
       user_id: users[0].id,
-      dive_date: "2020-05-04T07:00:00.000Z",
+      dive_date: "2020-05-04T00:00:00.000Z",
       country: "Cayman Islands",
       region: "Grand Cayman, West",
       dive_site: "Cheeseburger Reef",
@@ -192,7 +208,7 @@ function makeDivesArray(users) {
     {
       id: 2,
       user_id: users[users.length - 1].id,
-      dive_date: "2020-05-05T07:00:00.000Z",
+      dive_date: "2020-05-05T00:00:00.000Z",
       country: "Cayman Islands",
       region: "Grand Cayman, West",
       dive_site: "Cheeseburger Reef",
@@ -279,7 +295,7 @@ function makeMaliciousDive(users) {
   const maliciousDive = {
     id: 911,
     user_id: users[0].id,
-    dive_date: "2020-05-10T07:00:00.000Z",
+    dive_date: "2020-05-10T00:00:00.000Z",
     country: "dive country",
     region: "dive region",
     dive_site: '<script>alert("xss");</script>',
@@ -300,7 +316,7 @@ function makeMaliciousDive(users) {
   const expectedDive = {
     id: 911,
     user_id: users[0].id,
-    dive_date: "2020-05-10T07:00:00.000Z",
+    dive_date: "2020-05-10T00:00:00.000Z",
     country: "dive country",
     region: "dive region",
     dive_site: '&lt;script&gt;alert("xss");&lt;/script&gt;',
@@ -329,6 +345,9 @@ function seedMaliciousDive(db, users, dive) {
       db.raw(`SELECT setval('users_id_seq', ?)`, [users[users.length - 1].id])
     )
     .then(() => db.into("dives").insert([dive]));
+
+  // is the correct way to include implementing seedUsers, which is hashing passwords?
+  // return seedUsers(db, [users]).then(() => db.into('dives').insert([dive]))
 }
 
 // CERTS
@@ -417,6 +436,9 @@ function seedMaliciousCert(db, users, cert) {
       db.raw(`SELECT setval('users_id_seq', ?)`, [users[users.length - 1].id])
     )
     .then(() => db.into("certs").insert([cert]));
+
+  // is the correct way to include implementing seedUsers, which is hashing passwords?
+  // return seedUsers(db, [users]).then(() => db.into("certs").insert([cert]));
 }
 
 // ANIMALTRACKER
@@ -491,6 +513,22 @@ function cleanTables(db) {
   );
 }
 
+function seedUsersCertsAndDives(db, users, certs, dives) {
+  return db.transaction(async (trx) => {
+    await seedUsers(trx, users);
+    await trx.into("certs").insert(certs);
+    await trx.raw(`SELECT setval ('certs_id_seq', ?)`, [
+      certs[certs.length - 1].id,
+    ]);
+    if (dives.length) {
+      await trx.into("dives").insert(dives);
+      await trx.raw(`SELECT setval 'dives_id_seq', ?`, [
+        dives[dives.length - 1].id,
+      ]);
+    }
+  });
+}
+
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
   const token = jwt.sign({ user_id: user.id }, secret, {
     subject: user.email,
@@ -540,6 +578,8 @@ module.exports = {
 
   makeFixtures,
   cleanTables,
+
+  seedUsersCertsAndDives,
 
   makeAuthHeader,
 };

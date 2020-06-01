@@ -114,7 +114,7 @@ describe("dives endpoints", function () {
     it(`creates a new dive, responding with 201 and the new dive`, () => {
       const newDive = {
         user_id: testUser.id,
-        dive_date: "2020-05-05T07:00:00.000Z",
+        dive_date: "2020-05-05T00:00:00.000Z",
         country: "test country",
         region: "test region",
         dive_site: "test site",

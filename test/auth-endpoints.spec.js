@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const app = require("../src/app");
 const helpers = require("./test-helpers");
 
-describe.only("Auth endpoints", function () {
+describe("Auth endpoints", function () {
   let db;
 
   const { testUsers } = helpers.makeFixtures();
@@ -21,6 +21,8 @@ describe.only("Auth endpoints", function () {
   after("disconnect from db", () => db.destroy());
 
   before("cleanup", () => helpers.cleanTables(db));
+
+  //   TJ said I need this, and to comment out the following afterEach to make tests work with the jwt/bcrypt, but need to get the bcrypt and everything else in place first
 
   /*before("logging user in", () => {
     supertest(app)
