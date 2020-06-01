@@ -56,7 +56,6 @@ animalTrackerRouter
 animalTrackerRouter.route("/animal/:animal").get((req, res, next) => {
   AnimalTrackerService.getByAnimal(req.app.get("db"), req.params.animal).then(
     (animal) => {
-      console.log("this ran", animal);
       if (!animal) {
         return res
           .status(404)

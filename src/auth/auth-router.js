@@ -31,8 +31,7 @@ authRouter.post("/login", jsonParser, (req, res, next) => {
             .json({ error: { message: `Incorrect email or password` } });
 
         const sub = dbUser.email;
-        // payload is user_id?
-        const payload = { id: dbUser.id };
+        const payload = { user_id: dbUser.id };
         res.send({ authToken: AuthService.createJwt(sub, payload) });
       });
     })
@@ -41,8 +40,7 @@ authRouter.post("/login", jsonParser, (req, res, next) => {
 
 authRouter.post("/refresh", requireAuth, (req, res) => {
   const sub = req.user.email;
-  // user_id?
-  const payload = { id: req.user.id };
+  const payload = { user_id: req.user.id };
   res.send({ authToken: AuthService.createJwt(sub, payload) });
 });
 

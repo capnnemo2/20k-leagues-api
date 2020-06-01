@@ -11,6 +11,7 @@ const divesRouter = require("./dives/dives-router");
 const animalTrackerRouter = require("./animalTracker/animalTracker-router");
 const usersRouter = require("./users/users-router");
 const certsRouter = require("./certs/certs-router");
+const authRouter = require("./auth/auth-router");
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(morgan(morganOption));
 app.use(helmet());
 app.use(cors());
 
+app.use("/api/auth", authRouter);
 app.use("/api/countries", countriesRouter);
 app.use("/api/animals", animalsRouter);
 app.use("/api/specialties", specialtiesRouter);

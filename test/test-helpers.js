@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+
 // COUNTRIES
 function makeCountriesArray() {
   return [
@@ -489,6 +491,14 @@ function cleanTables(db) {
   );
 }
 
+function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
+  const token = jwt.sign({ user_id: user.id }, secret, {
+    subject: user.email,
+    algorithm: "HS256",
+  });
+  return `Bearer ${token}`;
+}
+
 module.exports = {
   makeCountriesArray,
   makeExpectedCountry,
@@ -530,4 +540,6 @@ module.exports = {
 
   makeFixtures,
   cleanTables,
+
+  makeAuthHeader,
 };
