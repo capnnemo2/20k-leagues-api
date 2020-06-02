@@ -7,6 +7,10 @@ const jsonParser = express.json();
 divesRouter
   .route("/")
   .get((req, res, next) => {
+    // do I ever need to get all the dives for all the users? nope, don't think so
+    // therefore, I can scrap this endpoint
+    // but need to create a new one: (/api/dives)/user/:user_id
+    // this will fetch only the dives for a given user
     DivesService.getAllDives(req.app.get("db"))
       .then((dives) => {
         res.json(dives.map(DivesService.serializeDive));

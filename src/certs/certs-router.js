@@ -7,6 +7,10 @@ const jsonParser = express.json();
 certsRouter
   .route("/")
   .get((req, res, next) => {
+    // do I ever want to get all certs for all users? nope
+    // CHANGE CertsService.getAllCerts ---> CertsService.getByUserId
+    // which actually means that I don't need this GET endpoint at all
+    // I need to create a new route: (/api/certs/)user/:user_id
     CertsService.getAllCerts(req.app.get("db"))
       .then((certs) => {
         res.json(certs.map(CertsService.serializeCert));
