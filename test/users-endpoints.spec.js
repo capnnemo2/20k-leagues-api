@@ -212,6 +212,31 @@ describe("users endpoints", function () {
     });
   });
 
+  describe(`GET /api/users/:user_email`, () => {
+    context(`Given no users`, () => {
+      it(`responds with 404`, () => {
+        const userEmail = "sillybob@notanemail.address";
+        supertest(app)
+          .get(`/api/users/${userEmail}`)
+          .expect(404, { error: { message: `User doesn't exist` } });
+      });
+    });
+
+    context(`Given there are users in the database`, () => {
+      beforeEach("insert users", () => {
+        return helpers.seedUsers(db, testUsers);
+      });
+      it(`responds with 200 and the specified user`, () => {
+        const userEmail = "bob@email.com";
+        const expectedUser = testUsers[0];
+
+        return supertest(app)
+          .get(`/api/users/${userEmail}`)
+          .expect(200, expectedUser);
+      });
+    });
+  });
+
   describe(`GET /api/users/:user_id`, () => {
     context(`Given no users`, () => {
       it(`responds with 404`, () => {

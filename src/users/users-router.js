@@ -61,6 +61,21 @@ usersRouter
     );
   });
 
+usersRouter.route("/:user_email").get((req, res, next) => {
+  UsersService.getUserByEmail(req.app.get("db"), req.params.user_email).then(
+    (user) => {
+      if (!user) {
+        return res
+          .status(404)
+          .json({ error: { message: `User doesn't exist` } });
+      }
+      res.user = user;
+      res.json(res.user);
+      next();
+    }
+  );
+});
+
 usersRouter
   .route("/:user_id")
   .all(requireAuth)

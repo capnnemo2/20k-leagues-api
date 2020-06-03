@@ -9,8 +9,13 @@ const UsersService = {
   },
   // I think I don't need getUserById (when will I know the user id during login? I won't...)
   // I need getUserByEmail
+  // I do need to get user by id for PATCH endpoint
   getUserById(db, id) {
     return db.from("users").select("*").where("id", id).first();
+  },
+  getUserByEmail(db, email) {
+    // maybe I don't want to select everything? maybe everything but password?
+    return db.from("users").select("*").where("email", email).first();
   },
   insertUser(db, newUser) {
     return db
