@@ -1,5 +1,6 @@
 const express = require("express");
 const UsersService = require("./users-service");
+const { requireAuth } = require("../middleware/jwt-auth");
 
 const usersRouter = express.Router();
 const jsonParser = express.json();
@@ -62,6 +63,7 @@ usersRouter
 
 usersRouter
   .route("/:user_id")
+  .all(requireAuth)
   .all((req, res, next) => {
     UsersService.getUserById(req.app.get("db"), req.params.user_id).then(
       (user) => {
@@ -75,6 +77,14 @@ usersRouter
       }
     );
   })
+  // when do I get a user by id? do I need this endpoint?
+  // I think I need it to retrieve the user info when they log in, right?
+  // in which case it should not be protected because the client would need to get that info before/during login
+
+  // .all(requireAuth) works for PATCH, but when moved into .patch(requireAuth, jsonParser...) it does NOT work
+  // do not know how to requireAuth on PATCH but not GET
+
+  // tests currently do not use authorization, should be failing
   .get((req, res, next) => {
     res.json(UsersService.serializeUser(res.user));
   })

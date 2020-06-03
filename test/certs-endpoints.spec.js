@@ -107,6 +107,7 @@ describe("certs endpoints", function () {
 
       return supertest(app)
         .post("/api/certs")
+        .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
         .send(newCert)
         .expect(201)
         .expect((res) => {
@@ -116,6 +117,7 @@ describe("certs endpoints", function () {
           expect(res.body.cert_date).to.eql(newCert.cert_date);
           expect(res.body.user_id).to.eql(newCert.user_id);
         });
+      // do i need this last part?
       // .then((postRes) =>
       //   supertest(app)
       //     .get(`/api/certs/${postRes.body.id}`)
@@ -144,10 +146,14 @@ describe("certs endpoints", function () {
 
   describe(`GET /api/certs/:cert_id`, () => {
     context(`Given no certs`, () => {
+      before("insert users", () => {
+        return helpers.seedUsers(db, testUsers);
+      });
       it(`responds with 404`, () => {
         const certId = 1234567;
         return supertest(app)
           .get(`/api/certs/${certId}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .expect(404, { error: { message: `Cert doesn't exist` } });
       });
     });
@@ -163,6 +169,7 @@ describe("certs endpoints", function () {
 
         return supertest(app)
           .get(`/api/certs/${certId}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .expect(200, expectedCert);
       });
     });
@@ -178,6 +185,7 @@ describe("certs endpoints", function () {
       it(`removes XSS attack content`, () => {
         return supertest(app)
           .get(`/api/certs/${maliciousCert.id}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .expect((res) => {
             expect(res.body.agency).to.eql(expectedCert.agency);
@@ -192,10 +200,14 @@ describe("certs endpoints", function () {
 
   describe(`DELETE /api/certs/:cert_id`, () => {
     context(`Given there are no certs in the database`, () => {
+      before("insert users", () => {
+        return helpers.seedUsers(db, testUsers);
+      });
       it(`responds with 404`, () => {
         const certId = 1234567;
         return supertest(app)
           .delete(`/api/certs/${certId}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .expect(404, { error: { message: `Cert doesn't exist` } });
       });
     });
@@ -212,6 +224,7 @@ describe("certs endpoints", function () {
 
         return supertest(app)
           .delete(`/api/certs/${idToRemove}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .expect(204)
           .then((res) =>
             supertest(app).get(`/api/certs`).expect(expectedCerts)

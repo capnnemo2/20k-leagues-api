@@ -21,14 +21,54 @@ describe("Protected endpoints", () => {
 
   afterEach("cleanup", () => helpers.cleanTables(db));
 
-  //   beforeEach insert users?
+  //   beforeEach insert users? or insert users, dives, and certs?
 
   const protectedEndpoints = [
+    // {
+    //   // this is a template, not real
+    //   name: "GET /api/example/:example",
+    //   path: "/api/example/1",
+    //   method: supertest(app).get,
+    // },
     {
-      // this is a template, not real
-      name: "GET /api/example/:example",
-      path: "/api/example/1",
+      name: "POST /api/certs",
+      path: "/api/certs",
+      method: supertest(app).post,
+    },
+    {
+      name: "GET /api/certs/:cert_id",
+      path: "/api/certs/1",
       method: supertest(app).get,
+    },
+    {
+      name: "DELETE /api/certs/:cert_id",
+      path: "/api/certs/1",
+      method: supertest(app).delete,
+    },
+    {
+      name: "POST /api/dives",
+      path: "/api/dives",
+      method: supertest(app).post,
+    },
+    {
+      name: "GET /api/dives/:dive_id",
+      path: "/api/dives/1",
+      method: supertest(app).get,
+    },
+    {
+      name: "PATCH /api/dives/:dive_id",
+      path: "/api/dives/1",
+      method: supertest(app).patch,
+    },
+    {
+      name: "DELETE /api/dives/:dive_id",
+      path: "/api/dives/1",
+      method: supertest(app).delete,
+    },
+    {
+      name: "PATCH /api/users/:user_id",
+      path: "/api/users/1",
+      method: supertest(app).patch,
     },
   ];
 
@@ -53,7 +93,7 @@ describe("Protected endpoints", () => {
       });
 
       it(`responds 401 'Unauthorized request' when invalid sub in payload`, () => {
-        const invalidUser = { first_name: "not-real", id: 1 };
+        const invalidUser = { email: "not-real", id: 1 };
         return endpoint
           .method(endpoint.path)
           .set("Authorization", helpers.makeAuthHeader(invalidUser))

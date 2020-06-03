@@ -1,5 +1,6 @@
 const express = require("express");
 const DivesService = require("./dives-service");
+const { requireAuth } = require("../middleware/jwt-auth");
 
 const divesRouter = express.Router();
 const jsonParser = express.json();
@@ -11,13 +12,15 @@ divesRouter
     // therefore, I can scrap this endpoint
     // but need to create a new one: (/api/dives)/user/:user_id
     // this will fetch only the dives for a given user
+    // OR
+    // keep this one, get all certs and filter client-side...
     DivesService.getAllDives(req.app.get("db"))
       .then((dives) => {
         res.json(dives.map(DivesService.serializeDive));
       })
       .catch(next);
   })
-  .post(jsonParser, (req, res, next) => {
+  .post(requireAuth, jsonParser, (req, res, next) => {
     const {
       dive_date,
       country,
@@ -71,6 +74,7 @@ divesRouter
 
 divesRouter
   .route("/:dive_id")
+  .all(requireAuth)
   .all((req, res, next) => {
     DivesService.getById(req.app.get("db"), req.params.dive_id).then((dive) => {
       if (!dive) {

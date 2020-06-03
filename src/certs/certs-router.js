@@ -1,5 +1,6 @@
 const express = require("express");
 const CertsService = require("./certs-service");
+const { requireAuth } = require("../middleware/jwt-auth");
 
 const certsRouter = express.Router();
 const jsonParser = express.json();
@@ -11,13 +12,15 @@ certsRouter
     // CHANGE CertsService.getAllCerts ---> CertsService.getByUserId
     // which actually means that I don't need this GET endpoint at all
     // I need to create a new route: (/api/certs/)user/:user_id
+    // OR
+    // keep this one, get all certs and filter client-side...
     CertsService.getAllCerts(req.app.get("db"))
       .then((certs) => {
         res.json(certs.map(CertsService.serializeCert));
       })
       .catch(next);
   })
-  .post(jsonParser, (req, res, next) => {
+  .post(requireAuth, jsonParser, (req, res, next) => {
     const { agency, cert_level, cert_num, cert_date, user_id } = req.body;
     const newCert = { agency, cert_level, cert_num, cert_date, user_id };
 
@@ -36,6 +39,7 @@ certsRouter
 
 certsRouter
   .route("/:cert_id")
+  .all(requireAuth)
   .all((req, res, next) => {
     CertsService.getById(req.app.get("db"), req.params.cert_id)
       .then((cert) => {
@@ -49,6 +53,7 @@ certsRouter
       })
       .catch(next);
   })
+  // do I ever need to get a cert by it's id? or can I get rid of this endpoint?
   .get((req, res, next) => {
     res.json(CertsService.serializeCert(res.cert));
   })

@@ -233,6 +233,7 @@ describe("users endpoints", function () {
 
         return supertest(app)
           .get(`/api/users/${userId}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .expect(200, expectedUser);
       });
     });
@@ -250,6 +251,7 @@ describe("users endpoints", function () {
       it(`removes XSS attack content`, () => {
         return supertest(app)
           .get(`/api/users/${maliciousUser.id}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .expect((res) => {
             expect(res.body.first_name).to.eql(expectedUser.first_name);
@@ -262,10 +264,14 @@ describe("users endpoints", function () {
 
   describe(`PATCH /api/users/:user_id`, () => {
     context(`Given no users`, () => {
+      before("insert users", () => {
+        return helpers.seedUsers(db, testUsers);
+      });
       it(`responds with 404`, () => {
         const userId = 1234567;
         return supertest(app)
           .patch(`/api/users/${userId}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .expect(404, { error: { message: `User doesn't exist` } });
       });
     });
@@ -296,6 +302,7 @@ describe("users endpoints", function () {
 
         return supertest(app)
           .patch(`/api/users/${idToUpdate}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .send(updatedUser)
           .expect(204)
           .then((res) => {
@@ -307,6 +314,7 @@ describe("users endpoints", function () {
         const idToUpdate = 2;
         return supertest(app)
           .patch(`/api/users/${idToUpdate}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .send({ irrelevantField: "foo" })
           .expect(400, {
             error: {

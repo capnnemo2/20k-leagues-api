@@ -122,6 +122,7 @@ describe("dives endpoints", function () {
       };
       return supertest(app)
         .post("/api/dives")
+        .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
         .send(newDive)
         .expect(201)
         .expect((res) => {
@@ -137,10 +138,14 @@ describe("dives endpoints", function () {
 
   describe(`GET /api/dives/:dive_id`, () => {
     context(`Given no dives`, () => {
+      before("insert users", () => {
+        return helpers.seedUsers(db, testUsers);
+      });
       it(`responds with 404`, () => {
         const diveId = 1234567;
         return supertest(app)
           .get(`/api/dives/${diveId}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .expect(404, { error: { message: `Dive doesn't exist` } });
       });
     });
@@ -156,6 +161,7 @@ describe("dives endpoints", function () {
 
         return supertest(app)
           .get(`/api/dives/${diveId}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .expect(200, expectedDive);
       });
     });
@@ -171,6 +177,7 @@ describe("dives endpoints", function () {
       it(`removes XSS attack content`, () => {
         return supertest(app)
           .get(`/api/dives/${maliciousDive.id}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .expect(200)
           .expect((res) => {
             expect(res.body.dive_date).to.eql(expectedDive.dive_date);
@@ -199,10 +206,14 @@ describe("dives endpoints", function () {
 
   describe(`PATCH /api/dives/:dive_id`, () => {
     context(`Given no dives`, () => {
+      before("insert users", () => {
+        return helpers.seedUsers(db, testUsers);
+      });
       it(`responds with 404`, () => {
         const diveId = 1234567;
         return supertest(app)
           .patch(`/api/dives/${diveId}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .expect(404, { error: { message: `Dive doesn't exist` } });
       });
     });
@@ -240,6 +251,7 @@ describe("dives endpoints", function () {
 
         return supertest(app)
           .patch(`/api/dives/${idToUpdate}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .send(updatedDive)
           .expect(204)
           .then((res) => {
@@ -251,10 +263,14 @@ describe("dives endpoints", function () {
 
   describe(`DELETE /api/dives/:dive_id`, () => {
     context(`Given no dives`, () => {
+      before("insert users", () => {
+        return helpers.seedUsers(db, testUsers);
+      });
       it(`responds with 404`, () => {
         const diveId = 1234567;
         return supertest(app)
           .delete(`/api/dives/${diveId}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .expect(404, { error: { message: `Dive doesn't exist` } });
       });
     });
@@ -271,6 +287,7 @@ describe("dives endpoints", function () {
 
         return supertest(app)
           .delete(`/api/dives/${idToRemove}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .expect(204)
           .then((res) => {
             supertest(app).get(`/api/dives`).expect(expectedDives);
