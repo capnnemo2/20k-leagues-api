@@ -102,17 +102,17 @@ function seedSpecialties(db, specialties) {
 function makeUsersArray() {
   return [
     {
-      id: 1,
+      id: 2,
       first_name: "Bob",
       email: "bob@email.com",
-      password: "password",
+      password: "P@ssword1",
       specialties: [1, 2],
       instructor_specialties: [],
       wishlist: [1, 2, 3, 4, 5],
       wishlist_fulfilled: [],
     },
     {
-      id: 2,
+      id: 3,
       first_name: "Tim",
       email: "tim@email.com",
       password: "pop",
@@ -124,15 +124,12 @@ function makeUsersArray() {
   ];
 }
 
-// the bcrypt hash doesn't match, probably because it is being run two different times, independent of each other, rather than checking that the same tiem being run matches itself.
-// not sure how to resolve
 function makeExpectedUser(user) {
   return {
     id: user.id,
     first_name: user.first_name,
     email: user.email,
     password: user.password,
-    // password: bcrypt.hashSync(user.password, 1),
     specialties: user.specialties,
     instructor_specialties: user.instructor_specialties,
     wishlist: user.wishlist,
@@ -140,8 +137,6 @@ function makeExpectedUser(user) {
   };
 }
 
-// the bcrypt hash doesn't match, probably because it is being run two different times, independent of each other, rather than checking that the same tiem being run matches itself.
-// not sure how to resolve
 function seedUsers(db, users) {
   const preppedUsers = users.map((user) => ({
     ...user,

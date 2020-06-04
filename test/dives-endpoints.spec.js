@@ -31,7 +31,6 @@ describe("dives endpoints", function () {
 
     context(`Given there are dives in the database`, () => {
       beforeEach("insert dives", () => {
-        // return helpers.seedDives(db, testDives);
         return helpers.seedUsersAndDives(db, testUsers, testDives);
       });
 
@@ -104,6 +103,7 @@ describe("dives endpoints", function () {
         delete newDive[field];
         return supertest(app)
           .post("/api/dives")
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .send(newDive)
           .expect(400, {
             error: { message: `Missing '${field}' in request body` },

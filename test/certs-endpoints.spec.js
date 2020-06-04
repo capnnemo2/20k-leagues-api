@@ -89,6 +89,7 @@ describe("certs endpoints", function () {
         delete newCert[field];
         return supertest(app)
           .post("/api/certs")
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
           .send(newCert)
           .expect(400, {
             error: { message: `Missing '${field}' in request body` },
@@ -132,6 +133,7 @@ describe("certs endpoints", function () {
 
       return supertest(app)
         .post("/api/certs")
+        .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
         .send(maliciousCert)
         .expect(201)
         .expect((res) => {

@@ -61,19 +61,8 @@ usersRouter
     );
   });
 
-usersRouter.route("/:user_email").get((req, res, next) => {
-  UsersService.getUserByEmail(req.app.get("db"), req.params.user_email).then(
-    (user) => {
-      if (!user) {
-        return res
-          .status(404)
-          .json({ error: { message: `User doesn't exist` } });
-      }
-      res.user = user;
-      res.json(res.user);
-      next();
-    }
-  );
+usersRouter.route("/getinfo").get(requireAuth, (req, res) => {
+  res.send(req.user);
 });
 
 usersRouter
@@ -92,7 +81,8 @@ usersRouter
       }
     );
   })
-  // when do I get a user by id? do I need this endpoint?
+
+  // when do I get a user by id? do I need this endpoint? yes, for the PATCH endpoint
   // I think I need it to retrieve the user info when they log in, right?
   // in which case it should not be protected because the client would need to get that info before/during login
 

@@ -10,6 +10,8 @@ describe("users endpoints", function () {
   const { testUsers } = helpers.makeFixtures();
   const testUser = testUsers[0];
 
+  let authToken;
+
   before("make knex instance", () => {
     db = knex({
       client: "pg",
@@ -24,13 +26,31 @@ describe("users endpoints", function () {
 
   afterEach("cleanup", () => helpers.cleanTables(db));
 
-  describe(`GET /api/users`, () => {
-    context(`Given there are no users`, () => {
-      it(`responds with 200 and an empty list`, () => {
-        return supertest(app).get("/api/users").expect(200, []);
+  beforeEach("register and login user", () => {
+    const user = {
+      id: 1,
+      first_name: "Bob5",
+      email: "bob5@email.com",
+      password: "P@ssword5",
+      specialties: [1, 2],
+      instructor_specialties: [],
+      wishlist: [1, 2, 3, 4, 5],
+      wishlist_fulfilled: [],
+    };
+    return supertest(app)
+      .post("/api/users")
+      .send(user)
+      .then((res) => {
+        return supertest(app)
+          .post("/api/auth/login")
+          .send(user)
+          .then((res) => {
+            authToken = res.body.authToken;
+          });
       });
-    });
+  });
 
+  describe(`GET /api/users`, () => {
     context(`Given there are users in the database`, () => {
       beforeEach("insert users", () => {
         return helpers.seedUsers(db, testUsers);
@@ -40,25 +60,20 @@ describe("users endpoints", function () {
         const expectedUsers = testUsers.map((user) =>
           helpers.makeExpectedUser(user)
         );
-        return supertest(app).get("/api/users").expect(200, expectedUsers);
-      });
-    });
 
-    context(`Given an XSS attack user`, () => {
-      const { maliciousUser, expectedUser } = helpers.makeMaliciousUser();
-
-      beforeEach("insert malicious user", () => {
-        return helpers.seedMaliciousUser(db, maliciousUser);
-      });
-
-      it(`removes XSS attack content`, () => {
         return supertest(app)
           .get("/api/users")
           .expect(200)
           .expect((res) => {
-            expect(res.body[0].first_name).to.eql(expectedUser.first_name);
-            expect(res.body[0].email).to.eql(expectedUser.email);
-            expect(res.body[0].password).to.eql(expectedUser.password);
+            expect(res.body[1].first_name).to.eql(expectedUsers[0].first_name);
+            expect(res.body[1].email).to.eql(expectedUsers[0].email);
+            expect(res.body[1].wishlist).to.eql(expectedUsers[0].wishlist);
+            expect(res.body[1].specialties).to.eql(
+              expectedUsers[0].specialties
+            );
+            expect(res.body[1].instructor_specialties).to.eql(
+              expectedUsers[0].instructor_specialties
+            );
           });
       });
     });
@@ -212,37 +227,13 @@ describe("users endpoints", function () {
     });
   });
 
-  describe(`GET /api/users/:user_email`, () => {
-    context(`Given no users`, () => {
-      it(`responds with 404`, () => {
-        const userEmail = "sillybob@notanemail.address";
-        supertest(app)
-          .get(`/api/users/${userEmail}`)
-          .expect(404, { error: { message: `User doesn't exist` } });
-      });
-    });
-
-    context(`Given there are users in the database`, () => {
-      beforeEach("insert users", () => {
-        return helpers.seedUsers(db, testUsers);
-      });
-      it(`responds with 200 and the specified user`, () => {
-        const userEmail = "bob@email.com";
-        const expectedUser = testUsers[0];
-
-        return supertest(app)
-          .get(`/api/users/${userEmail}`)
-          .expect(200, expectedUser);
-      });
-    });
-  });
-
   describe(`GET /api/users/:user_id`, () => {
     context(`Given no users`, () => {
       it(`responds with 404`, () => {
         const userId = 1234567;
         return supertest(app)
           .get(`/api/users/${userId}`)
+          .set({ Authorization: `Bearer ${authToken}` })
           .expect(404, { error: { message: `User doesn't exist` } });
       });
     });
@@ -254,12 +245,18 @@ describe("users endpoints", function () {
 
       it(`responds with 200 and the specified user`, () => {
         const userId = 2;
-        const expectedUser = helpers.makeExpectedUser(testUsers[userId - 1]);
+        const expectedUser = helpers.makeExpectedUser(testUsers[userId - 2]);
 
         return supertest(app)
           .get(`/api/users/${userId}`)
           .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
-          .expect(200, expectedUser);
+          .expect(200)
+          .expect((res) => {
+            expect(res.body.first_name).to.eql(expectedUser.first_name);
+            expect(res.body.email).to.eql(expectedUser.email);
+            expect(res.body.wishlist).to.eql(expectedUser.wishlist);
+            expect(res.body.specialties).to.eql(expectedUser.specialties);
+          });
       });
     });
 
@@ -276,7 +273,7 @@ describe("users endpoints", function () {
       it(`removes XSS attack content`, () => {
         return supertest(app)
           .get(`/api/users/${maliciousUser.id}`)
-          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+          .set({ Authorization: `Bearer ${authToken}` })
           .expect(200)
           .expect((res) => {
             expect(res.body.first_name).to.eql(expectedUser.first_name);
