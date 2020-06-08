@@ -8,12 +8,6 @@ const jsonParser = express.json();
 certsRouter
   .route("/")
   .get((req, res, next) => {
-    // do I ever want to get all certs for all users? nope
-    // CHANGE CertsService.getAllCerts ---> CertsService.getByUserId
-    // which actually means that I don't need this GET endpoint at all
-    // I need to create a new route: (/api/certs/)user/:user_id
-    // OR
-    // keep this one, get all certs and filter client-side...
     CertsService.getAllCerts(req.app.get("db"))
       .then((certs) => {
         res.json(certs.map(CertsService.serializeCert));
@@ -36,6 +30,21 @@ certsRouter
       })
       .catch(next);
   });
+
+certsRouter.route("/user/:user_id").get(requireAuth, (req, res, next) => {
+  CertsService.getByUserId(req.app.get("db"), req.params.user_id).then(
+    (user) => {
+      if (!user.length) {
+        return res
+          .status(404)
+          .json({ error: { message: `User doesn't exist` } });
+      }
+      res.user = user;
+      res.json(res.user);
+      next();
+    }
+  );
+});
 
 certsRouter
   .route("/:cert_id")
@@ -64,7 +73,5 @@ certsRouter
       })
       .catch(next);
   });
-
-certsRouter.route("/");
 
 module.exports = certsRouter;

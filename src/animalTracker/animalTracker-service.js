@@ -11,6 +11,11 @@ const AnimalTrackerService = {
   getByRegion(db, region) {
     return db.from("animaltracker").select("*").where("region", region);
   },
+
+  insertAnimalsTracked(db, newAnimals) {
+    return db.insert(newAnimals).into("animaltracker").returning("*");
+  },
+
   insertAnimalTracked(db, newAnimal) {
     return db
       .insert(newAnimal)

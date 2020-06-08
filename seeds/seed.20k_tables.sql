@@ -20,7 +20,7 @@ INSERT INTO users (first_name, email, password, specialties, instructor_specialt
             "5",
             "6"
         }',
-        null,
+        '{}',
         '{
             "1",
             "2",

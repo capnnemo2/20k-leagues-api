@@ -14,20 +14,25 @@ animalTrackerRouter
       .catch(next);
   })
   .post(jsonParser, (req, res, next) => {
-    const { animal, country, region } = req.body;
-    const newAnimalTracked = { animal, country, region };
+    // const { animal, country, region } = req.body;
+    req.body.forEach((item) => {
+      let newAnimalTracked = {};
+      newAnimalTracked.animal = item.animal;
+      newAnimalTracked.country = item.country;
+      newAnimalTracked.region = item.region;
 
-    for (const [key, value] of Object.entries(newAnimalTracked)) {
-      if (value == null) {
-        return res
-          .status(400)
-          .json({ error: { message: `Missing '${key}' in request body` } });
+      for (const [key, value] of Object.entries(newAnimalTracked)) {
+        if (value == null) {
+          return res
+            .status(400)
+            .json({ error: { message: `Missing '${key}' in request body` } });
+        }
       }
-    }
+    });
 
-    AnimalTrackerService.insertAnimalTracked(
+    AnimalTrackerService.insertAnimalsTracked(
       req.app.get("db"),
-      newAnimalTracked
+      newAnimalsTracked
     )
       .then((animal) => {
         res.status(201).json(animal);
@@ -60,7 +65,6 @@ animalTrackerRouter
 animalTrackerRouter.route("/animal/:animal").get((req, res, next) => {
   AnimalTrackerService.getByAnimal(req.app.get("db"), req.params.animal).then(
     (animal) => {
-      console.log({ animal });
       if (!animal.length) {
         return res
           .status(404)
