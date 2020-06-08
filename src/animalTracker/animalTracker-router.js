@@ -14,7 +14,6 @@ animalTrackerRouter
       .catch(next);
   })
   .post(jsonParser, (req, res, next) => {
-    // const { animal, country, region } = req.body;
     for (const item of req.body) {
       let newAnimalTracked = {};
       newAnimalTracked.animal = item.animal;
@@ -41,26 +40,55 @@ animalTrackerRouter
       .catch(next);
   })
   .delete(jsonParser, (req, res, next) => {
-    const { animal, region } = req.body;
-    const animalInstance = { animal, region };
+    // const { animal, region } = req.body;
+    // const animalInstance = { animal, region };
 
-    for (const [key, value] of Object.entries(animalInstance)) {
-      if (value == null) {
-        return res
-          .status(400)
-          .json({ error: { message: `Missing '${key}' in request body` } });
+    for (const item of req.body) {
+      let animalInstance = {};
+      animalInstance.animal = item.animal;
+      animalInstance.region = item.region;
+
+      for (const [key, value] of Object.entries(animalInstance)) {
+        if (value == null) {
+          return res
+            .status(400)
+            .json({ error: { message: `Missing '${key}' in request body` } });
+        }
       }
     }
+    const animalsToRemove = req.body;
+    console.log("array to remove: ", animalsToRemove);
 
-    AnimalTrackerService.updateAnimalsTracked(req.app.get("db"), animal, region)
-      .then((numRowsAffected) => {
-        if (!numRowsAffected) {
-          res.status(404).json({ error: { message: "Animal doesn't exist" } });
-        } else {
-          res.status(204).end();
-        }
-      })
-      .catch(next);
+    animalsToRemove.forEach((a) =>
+      AnimalTrackerService.deleteAnimalsTracked(
+        req.app.get("db"),
+        a.animal,
+        a.region
+      )
+        .then((numRowsAffected) => {
+          if (!numRowsAffected) {
+            res
+              .status(404)
+              .json({ error: { message: "Animal doesn't exist" } });
+          } else {
+            res.status(204).end();
+          }
+        })
+        .catch(next)
+    );
+
+    // AnimalTrackerService.deleteAnimalsTracked(
+    //   req.app.get("db"),
+    //   animalsToRemove
+    // )
+    //   .then((numRowsAffected) => {
+    //     if (!numRowsAffected) {
+    //       res.status(404).json({ error: { message: "Animal doesn't exist" } });
+    //     } else {
+    //       res.status(204).end();
+    //     }
+    //   })
+    //   .catch(next);
   });
 
 animalTrackerRouter.route("/animal/:animal").get((req, res, next) => {

@@ -25,19 +25,9 @@ const AnimalTrackerService = {
       .then((animal) => AnimalTrackerService.getById(db, animal.id));
   },
 
-  // which of these fns is being used?? need to check, get rid of the other one!
-  updateAnimalsTracked(db, animal, region) {
+  deleteAnimalsTracked(db, animal, region) {
     return AnimalTrackerService.getByAnimal(db, animal)
       .where("region", region)
-      .delete()
-      .limit(1);
-  },
-  updateTracked(db, animal, region) {
-    return db
-      .from("animaltracker")
-      .select("*")
-      .where("animal", animal)
-      .andWhere("region", region)
       .delete()
       .limit(1);
   },
