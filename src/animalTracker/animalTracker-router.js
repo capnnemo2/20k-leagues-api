@@ -15,7 +15,7 @@ animalTrackerRouter
   })
   .post(jsonParser, (req, res, next) => {
     // const { animal, country, region } = req.body;
-    req.body.forEach((item) => {
+    for (const item of req.body) {
       let newAnimalTracked = {};
       newAnimalTracked.animal = item.animal;
       newAnimalTracked.country = item.country;
@@ -28,7 +28,7 @@ animalTrackerRouter
             .json({ error: { message: `Missing '${key}' in request body` } });
         }
       }
-    });
+    }
     const newAnimalsTracked = req.body;
 
     AnimalTrackerService.insertAnimalsTracked(

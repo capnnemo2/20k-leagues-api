@@ -59,6 +59,19 @@ divesRouter
     newDive.animals_spotted = animals_spotted;
     newDive.user_id = user_id;
 
+    if (newDive.max_depth === "") {
+      newDive.max_depth = null;
+    }
+    if (newDive.duration === "") {
+      newDive.duration = null;
+    }
+    if (newDive.water_temp === "") {
+      newDive.water_temp = null;
+    }
+    if (newDive.viz === "") {
+      newDive.viz = null;
+    }
+
     DivesService.insertDive(req.app.get("db"), newDive)
       .then((dive) => {
         res.status(201).json(DivesService.serializeDive(dive));
