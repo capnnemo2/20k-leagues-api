@@ -29,6 +29,7 @@ animalTrackerRouter
         }
       }
     });
+    const newAnimalsTracked = req.body;
 
     AnimalTrackerService.insertAnimalsTracked(
       req.app.get("db"),
