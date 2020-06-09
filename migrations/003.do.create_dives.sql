@@ -13,8 +13,8 @@ CREATE TABLE dives (
     buddy TEXT,
     viz INTEGER,
     dive_type TEXT,
-    drift_dive TEXT,
-    night_dive TEXT,
+    drift_dive BOOLEAN,
+    night_dive BOOLEAN,
     description TEXT,
     animals_spotted INTEGER [],
     rating INTEGER NOT NULL
