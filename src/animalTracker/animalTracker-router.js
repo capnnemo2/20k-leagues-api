@@ -40,9 +40,6 @@ animalTrackerRouter
       .catch(next);
   })
   .delete(jsonParser, (req, res, next) => {
-    // const { animal, region } = req.body;
-    // const animalInstance = { animal, region };
-
     for (const item of req.body) {
       let animalInstance = {};
       animalInstance.animal = item.animal;
@@ -56,39 +53,23 @@ animalTrackerRouter
         }
       }
     }
-    const animalsToRemove = req.body;
-    console.log("array to remove: ", animalsToRemove);
 
-    animalsToRemove.forEach((a) =>
-      AnimalTrackerService.deleteAnimalsTracked(
-        req.app.get("db"),
-        a.animal,
-        a.region
-      )
-        .then((numRowsAffected) => {
-          if (!numRowsAffected) {
-            res
-              .status(404)
-              .json({ error: { message: "Animal doesn't exist" } });
-          } else {
-            res.status(204).end();
-          }
-        })
-        .catch(next)
-    );
+    const animalToRemove = req.body;
+    console.log("the entry to remove", animalToRemove);
+    // this might still need a forEach...
 
-    // AnimalTrackerService.deleteAnimalsTracked(
-    //   req.app.get("db"),
-    //   animalsToRemove
-    // )
-    //   .then((numRowsAffected) => {
-    //     if (!numRowsAffected) {
-    //       res.status(404).json({ error: { message: "Animal doesn't exist" } });
-    //     } else {
-    //       res.status(204).end();
-    //     }
-    //   })
-    //   .catch(next);
+    AnimalTrackerService.deleteAnimalTracked(
+      req.app.get("db"),
+      animalToRemove[0].id
+    )
+      .then((numRowsAffected) => {
+        if (!numRowsAffected) {
+          res.status(404).json({ error: { message: `Animal doesn't exist` } });
+        } else {
+          res.status(204).end();
+        }
+      })
+      .catch(next);
   });
 
 animalTrackerRouter.route("/animal/:animal").get((req, res, next) => {

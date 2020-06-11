@@ -25,11 +25,9 @@ const AnimalTrackerService = {
       .then((animal) => AnimalTrackerService.getById(db, animal.id));
   },
 
-  deleteAnimalsTracked(db, animal, region) {
-    return AnimalTrackerService.getByAnimal(db, animal)
-      .where("region", region)
-      .delete()
-      .limit(1);
+  // this doesn't limit the delete, deletes all instances instead of one
+  deleteAnimalTracked(db, id) {
+    return AnimalTrackerService.getById(db, id).delete();
   },
 };
 
