@@ -16,6 +16,7 @@ const AnimalTrackerService = {
     return db.insert(newAnimals).into("animaltracker").returning("*");
   },
 
+  // I don't think the fn below is being used?
   insertAnimalTracked(db, newAnimal) {
     return db
       .insert(newAnimal)

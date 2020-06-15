@@ -14,11 +14,13 @@ animalTrackerRouter
       .catch(next);
   })
   .post(jsonParser, (req, res, next) => {
-    for (const item of req.body) {
+    const newAnimalsTracked = req.body;
+
+    newAnimalsTracked.forEach((animal) => {
       let newAnimalTracked = {};
-      newAnimalTracked.animal = item.animal;
-      newAnimalTracked.country = item.country;
-      newAnimalTracked.region = item.region;
+      newAnimalTracked.animal = animal.animal;
+      newAnimalTracked.country = animal.country;
+      newAnimalTracked.region = animal.region;
 
       for (const [key, value] of Object.entries(newAnimalTracked)) {
         if (value == null) {
@@ -27,8 +29,7 @@ animalTrackerRouter
             .json({ error: { message: `Missing '${key}' in request body` } });
         }
       }
-    }
-    const newAnimalsTracked = req.body;
+    });
 
     AnimalTrackerService.insertAnimalsTracked(
       req.app.get("db"),
@@ -55,8 +56,6 @@ animalTrackerRouter
     }
 
     const animalToRemove = req.body;
-    console.log("the entry to remove", animalToRemove);
-    // this might still need a forEach...
 
     AnimalTrackerService.deleteAnimalTracked(
       req.app.get("db"),

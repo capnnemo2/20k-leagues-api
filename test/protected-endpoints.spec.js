@@ -21,20 +21,7 @@ describe("Protected endpoints", () => {
 
   afterEach("cleanup", () => helpers.cleanTables(db));
 
-  //   beforeEach insert users? or insert users, dives, and certs?
-
   const protectedEndpoints = [
-    // {
-    //   // this is a template, not real
-    //   name: "GET /api/example/:example",
-    //   path: "/api/example/1",
-    //   method: supertest(app).get,
-    // },
-    {
-      name: "POST /api/certs",
-      path: "/api/certs",
-      method: supertest(app).post,
-    },
     {
       name: "GET /api/certs/:cert_id",
       path: "/api/certs/1",

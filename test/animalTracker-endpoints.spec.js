@@ -2,6 +2,7 @@ const knex = require("knex");
 const app = require("../src/app");
 const helpers = require("./test-helpers");
 const { TEST_DATABASE_URL } = require("../src/config");
+const supertest = require("supertest");
 
 describe("animalTracker", function () {
   let db;
@@ -104,37 +105,43 @@ describe("animalTracker", function () {
   describe(`POST /api/animalTracker`, () => {
     const requiredFields = ["animal", "country", "region"];
     requiredFields.forEach((field) => {
-      const newAnimalTracked = {
-        animal: "Walrus",
-        country: "North Pole",
-        region: "Santa's Neighborhood",
-      };
+      const newAnimalsTracked = [
+        {
+          animal: "Walrus",
+          country: "North Pole",
+          region: "Santa's Neighborhood",
+        },
+      ];
 
       it(`responds with 400 and an error when the '${field}' is missing`, () => {
-        delete newAnimalTracked[field];
-        return supertest(app)
-          .post("/api/animalTracker")
-          .send(newAnimalTracked)
-          .expect(400, {
-            error: { message: `Missing '${field}' in request body` },
-          });
+        newAnimalsTracked.forEach((animal) => {
+          delete animal[field];
+          return supertest(app)
+            .post("/api/animalTracker")
+            .send(newAnimalsTracked)
+            .expect(400, {
+              error: { message: `Missing '${field}' in request body` },
+            });
+        });
       });
     });
 
     it(`creates a new animal tracked, responding with 201 and the new animal tracked`, () => {
-      const newAnimalTracked = {
-        animal: "Walrus",
-        country: "North Pole",
-        region: "Santa's Neighborhood",
-      };
+      const newAnimalsTracked = [
+        {
+          animal: "Walrus",
+          country: "North Pole",
+          region: "Santa's Neighborhood",
+        },
+      ];
       return supertest(app)
         .post("/api/animalTracker")
-        .send(newAnimalTracked)
+        .send(newAnimalsTracked)
         .expect(201)
         .expect((res) => {
-          expect(res.body.animal).to.eql(newAnimalTracked.animal);
-          expect(res.body.country).to.eql(newAnimalTracked.country);
-          expect(res.body.region).to.eql(newAnimalTracked.region);
+          expect(res.body.animal).to.eql(newAnimalsTracked.animal);
+          expect(res.body.country).to.eql(newAnimalsTracked.country);
+          expect(res.body.region).to.eql(newAnimalsTracked.region);
         });
     });
   });
@@ -142,10 +149,13 @@ describe("animalTracker", function () {
   describe(`DELETE /api/animalTracker`, () => {
     context(`Given no animals tracked`, () => {
       it(`responds with 404`, () => {
-        const animalInstance = {
-          animal: "Dinosaur",
-          region: "Space",
-        };
+        const animalInstance = [
+          {
+            id: 2,
+            animal: "Dinosaur",
+            region: "Space",
+          },
+        ];
         return supertest(app)
           .delete("/api/animalTracker")
           .send(animalInstance)
@@ -160,10 +170,13 @@ describe("animalTracker", function () {
       });
 
       it(`responds with 204 and removes the animal instance`, () => {
-        const animalInstance = {
-          animal: "Manta Ray",
-          region: "Komodo",
-        };
+        const animalInstance = [
+          {
+            id: 2,
+            animal: "Manta Ray",
+            region: "Komodo",
+          },
+        ];
         const expectedAnimalsTracked = testAnimalsTracked.filter(
           (ai) =>
             ai.animal !== animalInstance.animal &&
@@ -184,19 +197,24 @@ describe("animalTracker", function () {
 
     const requiredFields = ["animal", "region"];
     requiredFields.forEach((field) => {
-      const animalInstance = {
-        animal: "animal",
-        region: "region",
-      };
+      const animalInstance = [
+        {
+          id: 2,
+          animal: "animal",
+          region: "region",
+        },
+      ];
 
       it(`responds with 400 and an error when the '${field}' is missing`, () => {
-        delete animalInstance[field];
-        return supertest(app)
-          .delete("/api/animalTracker")
-          .send(animalInstance)
-          .expect(400, {
-            error: { message: `Missing '${field}' in request body` },
-          });
+        animalInstance.forEach((animal) => {
+          delete animal[field];
+          return supertest(app)
+            .delete("/api/animalTracker")
+            .send(animalInstance)
+            .expect(400, {
+              error: { message: `Missing '${field}' in request body` },
+            });
+        });
       });
     });
   });

@@ -14,7 +14,7 @@ certsRouter
       })
       .catch(next);
   })
-  .post(requireAuth, jsonParser, (req, res, next) => {
+  .post(jsonParser, (req, res, next) => {
     const { agency, cert_level, cert_num, cert_date, user_id } = req.body;
     const newCert = { agency, cert_level, cert_num, cert_date, user_id };
 
