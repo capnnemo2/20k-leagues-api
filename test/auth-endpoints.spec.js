@@ -22,22 +22,6 @@ describe("Auth endpoints", function () {
 
   before("cleanup", () => helpers.cleanTables(db));
 
-  //   TJ said I need this, and to comment out the following afterEach to make tests work with the jwt/bcrypt, but need to get the bcrypt and everything else in place first
-
-  /*before("logging user in", () => {
-    supertest(app)
-      .post("/api/users")
-      .send(testUser)
-      .then((user) => {
-        supertest(app)
-          .post("/api/auth/login")
-          .send(testUser)
-          .then((loggedInUser) => {
-            authToken = loggedInUser.authToken;
-          });
-      });
-  });*/
-
   afterEach("cleanup", () => helpers.cleanTables(db));
 
   describe(`POST /api/auth/login`, () => {

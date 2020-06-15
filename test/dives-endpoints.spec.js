@@ -2,6 +2,7 @@ const knex = require("knex");
 const app = require("../src/app");
 const helpers = require("./test-helpers");
 const { TEST_DATABASE_URL } = require("../src/config");
+const supertest = require("supertest");
 
 describe("dives endpoints", function () {
   let db;
@@ -200,6 +201,36 @@ describe("dives endpoints", function () {
             );
             expect(res.body.rating).to.eql(expectedDive.rating);
           });
+      });
+    });
+  });
+
+  describe(`GET /api/dives/user/:user_id`, () => {
+    context(`Given no user`, () => {
+      before("insert users", () => {
+        return helpers.seedUsers(db, testUsers);
+      });
+      it(`responds with 404`, () => {
+        const userId = 2;
+        return supertest(app)
+          .get(`/api/dives/user/${userId}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+          .expect(404, { error: { message: `User doesn't exist` } });
+      });
+    });
+
+    context(`Given there are user dives`, () => {
+      beforeEach("insert dives", () => {
+        return helpers.seedUsersAndDives(db, testUsers, testDives);
+      });
+
+      it(`responds with 200 and a list of all user dives`, () => {
+        const userId = 2;
+        const expectedList = helpers.makeExpectedUserDives(userId, testDives);
+        return supertest(app)
+          .get(`/api/dives/user/${userId}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+          .expect(200, expectedList);
       });
     });
   });

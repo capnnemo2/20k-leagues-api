@@ -2,6 +2,7 @@ const knex = require("knex");
 const app = require("../src/app");
 const helpers = require("./test-helpers");
 const { TEST_DATABASE_URL } = require("../src/config");
+const supertest = require("supertest");
 
 describe("certs endpoints", function () {
   let db;
@@ -118,12 +119,6 @@ describe("certs endpoints", function () {
           expect(res.body.cert_date).to.eql(newCert.cert_date);
           expect(res.body.user_id).to.eql(newCert.user_id);
         });
-      // do i need this last part?
-      // .then((postRes) =>
-      //   supertest(app)
-      //     .get(`/api/certs/${postRes.body.id}`)
-      //     .expect(postRes.body)
-      // );
     });
 
     it(`removes XSS attack content from response`, () => {
@@ -196,6 +191,36 @@ describe("certs endpoints", function () {
             expect(res.body.cert_date).to.eql(expectedCert.cert_date);
             expect(res.body.user_id).to.eql(expectedCert.user_id);
           });
+      });
+    });
+  });
+
+  describe(`GET /api/certs/user/:user_id`, () => {
+    context(`Given no user`, () => {
+      before("insert users", () => {
+        return helpers.seedUsers(db, testUsers);
+      });
+      it(`responds with 404`, () => {
+        const userId = 2;
+        return supertest(app)
+          .get(`/api/certs/user/${userId}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+          .expect(404, { error: { message: `User doesn't exist` } });
+      });
+    });
+
+    context(`Given there are user certs`, () => {
+      beforeEach("insert certs", () => {
+        return helpers.seedUsersAndCerts(db, testUsers, testCerts);
+      });
+
+      it(`responds with 200 and a list of all user certs`, () => {
+        const userId = 2;
+        const expectedList = helpers.makeExpectedUserCerts(userId, testCerts);
+        return supertest(app)
+          .get(`/api/certs/user/${userId}`)
+          .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+          .expect(200, expectedList);
       });
     });
   });

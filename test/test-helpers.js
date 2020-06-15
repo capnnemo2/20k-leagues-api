@@ -258,9 +258,9 @@ function makeExpectedUserDives(userId, dives) {
       country: dive.country,
       region: dive.region,
       dive_site: dive.dive_site,
-      max_depth: dive.max_depth,
-      duration: dive.duration,
-      water_temp: dive.water_temp,
+      max_depth: Number(dive.max_depth),
+      duration: Number(dive.duration),
+      water_temp: Number(dive.water_temp),
       dive_shop: dive.dive_shop,
       guide: dive.guide,
       buddy: dive.buddy,
@@ -431,9 +431,6 @@ function seedMaliciousCert(db, users, cert) {
       db.raw(`SELECT setval('users_id_seq', ?)`, [users[users.length - 1].id])
     )
     .then(() => db.into("certs").insert([cert]));
-
-  // is the correct way to include implementing seedUsers, which is hashing passwords?
-  // return seedUsers(db, [users]).then(() => db.into("certs").insert([cert]));
 }
 
 // ANIMALTRACKER

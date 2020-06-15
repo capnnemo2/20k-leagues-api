@@ -11,7 +11,6 @@ const UsersService = {
     return db.from("users").select("*").where("id", id).first();
   },
   getUserByEmail(db, email) {
-    // maybe I don't want to select everything? maybe everything but password?
     return db.from("users").select("*").where("email", email).first();
   },
   insertUser(db, newUser) {

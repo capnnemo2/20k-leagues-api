@@ -101,7 +101,7 @@ animalTrackerRouter.route("/region/:region").get((req, res, next) => {
   );
 });
 
-// this works, but I don't need it
+// this works, but I don't need it -> delete it?
 animalTrackerRouter.route("/:animal_id").get((req, res, next) => {
   AnimalTrackerService.getById(req.app.get("db"), req.params.animal_id).then(
     (entry) => {

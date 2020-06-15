@@ -76,7 +76,7 @@ describe("animalTracker", function () {
 
   describe(`GET /api/animalTracker/region/:region`, () => {
     context(`Given no animals tracked`, () => {
-      it(`reponds with 404`, () => {
+      it(`responds with 404`, () => {
         const region = "The Moon";
         return supertest(app)
           .get(`/api/animalTracker/region/${region}`)
