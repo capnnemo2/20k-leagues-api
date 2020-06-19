@@ -82,11 +82,11 @@ divesRouter
 divesRouter.route("/user/:user_id").get(requireAuth, (req, res, next) => {
   DivesService.getByUserId(req.app.get("db"), req.params.user_id).then(
     (user) => {
-      if (!user.length) {
-        return res
-          .status(404)
-          .json({ error: { message: `User doesn't exist` } });
-      }
+      // if (!user.length) {
+      //   return res
+      //     .status(404)
+      //     .json({ error: { message: `User doesn't exist` } });
+      // }
       res.user = user;
       res.json(res.user);
       next();
