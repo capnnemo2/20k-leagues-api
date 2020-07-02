@@ -21,6 +21,8 @@ animalTrackerRouter
       newAnimalTracked.animal = animal.animal;
       newAnimalTracked.country = animal.country;
       newAnimalTracked.region = animal.region;
+      // TODO add user id
+      newAnimalTracked.user_id = animal.user_id;
 
       for (const [key, value] of Object.entries(newAnimalTracked)) {
         if (value == null) {
@@ -45,6 +47,8 @@ animalTrackerRouter
       let animalInstance = {};
       animalInstance.animal = item.animal;
       animalInstance.region = item.region;
+      // TODO add user id
+      animalInstance.user_id = item.user_id;
 
       for (const [key, value] of Object.entries(animalInstance)) {
         if (value == null) {
