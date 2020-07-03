@@ -210,17 +210,6 @@ INSERT INTO countries (country_name, regions) VALUES
         }'
     );
 
-INSERT INTO animalTracker (animal, country, region) VALUES
-    (
-        'Whale Shark',
-        'United States of America',
-        'Hawaii'
-    ),
-    (
-        'Manta Ray',
-        'United States of America',
-        'Hawaii'
-    );
 
 
 
