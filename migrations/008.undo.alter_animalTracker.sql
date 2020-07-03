@@ -1,1 +1,1 @@
-ALTER TABLE animalTracker DROP COLUMN IF EXISTS user_id;
+ALTER TABLE animalTracker DROP COLUMN IF EXISTS dive_id;
