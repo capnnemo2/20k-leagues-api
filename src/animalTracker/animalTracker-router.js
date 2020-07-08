@@ -61,9 +61,12 @@ animalTrackerRouter
 
     const animalToRemove = req.body;
 
+    console.log(animalToRemove);
+
     AnimalTrackerService.deleteAnimalTracked(
       req.app.get("db"),
-      animalToRemove[0].id
+      animalToRemove[0].animal,
+      animalToRemove[0].dive_id
     )
       .then((numRowsAffected) => {
         if (!numRowsAffected) {

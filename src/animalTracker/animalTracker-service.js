@@ -14,9 +14,16 @@ const AnimalTrackerService = {
   insertAnimalsTracked(db, newAnimals) {
     return db.insert(newAnimals).into("animaltracker").returning("*");
   },
-  deleteAnimalTracked(db, id) {
-    return AnimalTrackerService.getById(db, id).delete();
+  deleteAnimalTracked(db, animal, dive_id) {
+    return AnimalTrackerService.getByAnimal(db, animal).where(
+      "dive_id",
+      dive_id
+    );
   },
+
+  // deleteAnimalTracked(db, id) {
+  //   return AnimalTrackerService.getById(db, id).delete();
+  // },
 };
 
 module.exports = AnimalTrackerService;

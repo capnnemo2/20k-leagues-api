@@ -154,6 +154,7 @@ describe("animalTracker", function () {
             id: 2,
             animal: "Dinosaur",
             region: "Space",
+            dive_id: 2,
           },
         ];
         return supertest(app)
@@ -175,6 +176,7 @@ describe("animalTracker", function () {
             id: 2,
             animal: "Manta Ray",
             region: "Komodo",
+            dive_id: 2,
           },
         ];
         const expectedAnimalsTracked = testAnimalsTracked.filter(
@@ -195,13 +197,14 @@ describe("animalTracker", function () {
       });
     });
 
-    const requiredFields = ["animal", "region"];
+    const requiredFields = ["animal", "region", "dive_id"];
     requiredFields.forEach((field) => {
       const animalInstance = [
         {
           id: 2,
           animal: "animal",
           region: "region",
+          dive_id: 2,
         },
       ];
 
