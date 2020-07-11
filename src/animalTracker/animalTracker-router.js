@@ -66,7 +66,7 @@ animalTrackerRouter
         req.app.get("db"),
         animal.animal,
         animal.dive_id
-      ).then((res) => {
+      ).then(() => {
         numDeleted++;
         if (numDeleted === animalToRemove.length) {
           res.send(204);
