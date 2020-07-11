@@ -60,22 +60,19 @@ animalTrackerRouter
     }
 
     const animalToRemove = req.body;
-
-    console.log(animalToRemove);
-
-    AnimalTrackerService.deleteAnimalTracked(
-      req.app.get("db"),
-      animalToRemove[0].animal,
-      animalToRemove[0].dive_id
-    )
-      .then((numRowsAffected) => {
-        if (!numRowsAffected) {
-          res.status(404).json({ error: { message: `Animal doesn't exist` } });
-        } else {
-          res.status(204).end();
+    let numDeleted = 0;
+    animalToRemove.forEach((animal) => {
+      AnimalTrackerService.deleteAnimalTracked(
+        req.app.get("db"),
+        animal.animal,
+        animal.dive_id
+      ).then((res) => {
+        numDeleted++;
+        if (numDeleted === animalToRemove.length) {
+          res.send(204);
         }
-      })
-      .catch(next);
+      });
+    });
   });
 
 animalTrackerRouter.route("/animal/:animal").get((req, res, next) => {

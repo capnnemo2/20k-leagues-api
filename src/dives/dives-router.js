@@ -157,6 +157,9 @@ divesRouter
       });
     }
 
+    console.log(req.params.dive_id);
+    console.log(diveToUpdate);
+
     DivesService.updateDive(req.app.get("db"), req.params.dive_id, diveToUpdate)
       .then((numRowsAffected) => {
         res.status(204).end();

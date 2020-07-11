@@ -1,8 +1,8 @@
 # 20K Leagues
 
-[LIVE APP](link goes here)
+[LIVE APP](https://20k-leagues.now.sh/)
 
-[CLIENT REPO](link goes here)
+[CLIENT REPO](https://github.com/capnnemo2/20k-leagues)
 
 ## Summary
 

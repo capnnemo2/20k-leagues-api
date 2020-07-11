@@ -235,7 +235,7 @@ describe("dives endpoints", function () {
     });
   });
 
-  describe(`PATCH /api/dives/:dive_id`, () => {
+  describe.only(`PATCH /api/dives/:dive_id`, () => {
     context(`Given no dives`, () => {
       before("insert users", () => {
         return helpers.seedUsers(db, testUsers);
@@ -263,16 +263,16 @@ describe("dives endpoints", function () {
           country: "dive country",
           region: "dive region",
           dive_site: "dive site",
-          max_depth: "5",
+          max_depth: null,
           duration: "5",
           water_temp: "5",
           dive_shop: "dive shop",
           guide: "guide",
           buddy: "buddy",
-          viz: 5,
+          viz: null,
           dive_type: "dive type",
-          drift_dive: "true",
-          night_dive: "false",
+          drift_dive: true,
+          night_dive: false,
           description: "a dive",
           animals_spotted: [1, 2],
           rating: 5,

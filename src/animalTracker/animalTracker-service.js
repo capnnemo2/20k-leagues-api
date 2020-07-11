@@ -15,10 +15,10 @@ const AnimalTrackerService = {
     return db.insert(newAnimals).into("animaltracker").returning("*");
   },
   deleteAnimalTracked(db, animal, dive_id) {
-    return AnimalTrackerService.getByAnimal(db, animal).where(
-      "dive_id",
-      dive_id
-    );
+    return db("animaltracker")
+      .where("animal", animal)
+      .andWhere("dive_id", dive_id)
+      .del();
   },
 
   // deleteAnimalTracked(db, id) {
